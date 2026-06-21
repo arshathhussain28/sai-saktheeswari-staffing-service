@@ -1,0 +1,95 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-poppins: 'Poppins', sans-serif;
+  --font-inter: 'Inter', sans-serif;
+  --teal-primary: #0d4f64;
+  --navy-dark: #0e1f2f;
+  --gold-accent: #e6a84f;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-inter), 'Inter', sans-serif;
+  color: #1a2a3a;
+  background: #f8f9fa;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-poppins), 'Poppins', sans-serif;
+}
+
+@layer utilities {
+  .section-heading {
+    @apply font-poppins text-3xl md:text-4xl font-bold text-teal-primary leading-tight;
+  }
+  .section-sub {
+    @apply font-inter text-base md:text-lg text-text-muted leading-relaxed;
+  }
+  .btn-gold {
+    @apply bg-gold text-navy font-poppins font-semibold px-7 py-3 rounded-lg
+           hover:bg-gold-dark transition-all duration-200 shadow-md hover:shadow-lg
+           inline-flex items-center gap-2;
+  }
+  .btn-outline-white {
+    @apply border-2 border-white text-white font-poppins font-semibold px-7 py-3
+           rounded-lg hover:bg-white hover:text-teal-primary transition-all duration-200
+           inline-flex items-center gap-2;
+  }
+  .card-hover {
+    @apply transition-all duration-300 hover:-translate-y-1 hover:shadow-xl;
+  }
+}
+
+/* Counter animation */
+@keyframes countUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.count-animate {
+  animation: countUp 0.8s ease-out forwards;
+}
+
+/* FAQ accordion */
+.faq-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease-out;
+}
+.faq-content.open {
+  max-height: 500px;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #f1f1f1; }
+::-webkit-scrollbar-thumb { background: #0d4f64; border-radius: 3px; }
+
+/* Card Fan Carousel */
+.fan-layout {
+  height: clamp(22rem, 50vw, 38rem);
+  perspective: 1200px;
+}
+.fan-card {
+  position: absolute;
+  width: clamp(8rem, 16vw, 14rem);
+  height: clamp(12rem, 24vw, 20rem);
+  border-radius: 1rem;
+  overflow: hidden;
+  cursor: pointer;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.25), 0 2px 8px rgba(0,0,0,0.15);
+  will-change: transform;
+  border: 2px solid rgba(255,255,255,0.15);
+  transition: box-shadow 0.3s ease;
+}
+.fan-card:hover {
+  box-shadow: 0 20px 60px rgba(0,0,0,0.4), 0 4px 16px rgba(0,0,0,0.2);
+}
+
+/* Hide scrollbar but keep functionality */
+.scrollbar-hide::-webkit-scrollbar { display: none; }
+.scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
