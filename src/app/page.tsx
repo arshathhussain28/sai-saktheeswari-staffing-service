@@ -1163,62 +1163,128 @@ function ProcessSection() {
 
 /* ─── TRAINING ─── */
 function TrainingSection() {
+  const ref = useRef(null);
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] });
+  const yFeatured = useTransform(scrollYProgress, [0, 1], [28, -28]);
+  const yBadge = useTransform(scrollYProgress, [0, 1], [-18, 22]);
+
   const photos = [
-    { src: '/images/training-3.jpeg', caption: 'Weekly briefing at Cuddalore centre' },
+    { src: '/images/training-3.jpeg', caption: 'Weekly briefing · Cuddalore centre' },
     { src: '/images/training-7.jpeg', caption: 'On-site training drill' },
     { src: '/images/training-11.jpeg', caption: 'Large-scale team session' },
-    { src: '/images/deployment.jpeg', caption: 'Guards deployed at client site' },
+    { src: '/images/deployment.jpeg', caption: 'Deployed at client site' },
   ];
 
+  const sIcon = { fill: 'none', stroke: 'currentColor', strokeWidth: 1.5, strokeLinecap: 'round' as const, strokeLinejoin: 'round' as const };
   const points = [
-    { icon: '🎯', title: 'Discipline & Conduct', desc: 'Punctuality, grooming, and professional behaviour standards.' },
-    { icon: '🦺', title: 'Safety Protocols', desc: 'Fire safety, emergency response, access control, incident reporting.' },
-    { icon: '💬', title: 'Communication', desc: 'Professional interaction with clients, supervisors and public.' },
-    { icon: '🔁', title: 'Refresher Sessions', desc: 'Weekly briefings to keep skills sharp and compliance current.' },
+    { title: 'Discipline & Conduct', desc: 'Punctuality, grooming and professional behaviour standards.',
+      Icon: () => (<svg width="22" height="22" viewBox="0 0 24 24" {...sIcon}><circle cx="12" cy="8" r="5" /><path d="m8.5 12.5-1.5 8 5-3 5 3-1.5-8" /></svg>) },
+    { title: 'Safety Protocols', desc: 'Fire safety, emergency response, access control & incident reporting.',
+      Icon: () => (<svg width="22" height="22" viewBox="0 0 24 24" {...sIcon}><path d="M12 2 4 5v6c0 5 3.4 8.5 8 10 4.6-1.5 8-5 8-10V5l-8-3Z" /><path d="M12 8v4M12 16h.01" /></svg>) },
+    { title: 'Communication', desc: 'Professional interaction with clients, supervisors and the public.',
+      Icon: () => (<svg width="22" height="22" viewBox="0 0 24 24" {...sIcon}><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4L3 21l1.1-3.9A8.4 8.4 0 1 1 21 11.5Z" /></svg>) },
+    { title: 'Refresher Sessions', desc: 'Weekly briefings keep skills sharp and compliance current.',
+      Icon: () => (<svg width="22" height="22" viewBox="0 0 24 24" {...sIcon}><path d="M21 12a9 9 0 1 1-3-6.7" /><path d="M21 4v4h-4" /></svg>) },
   ];
 
   return (
-    <section className="py-24 bg-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid lg:grid-cols-2 gap-16 items-center">
-          <FadeIn direction="left">
-            <div className="grid grid-cols-2 gap-4">
-              {photos.map((p, i) => (
-                <motion.div key={i} whileHover={{ scale: 1.03 }} className="relative rounded-xl overflow-hidden aspect-[4/3] group">
-                  <img src={p.src} alt={p.caption} className="w-full h-full object-cover" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#0e1f2f]/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-3">
-                    <p className="text-white text-xs font-inter">{p.caption}</p>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          </FadeIn>
+    <section ref={ref} className="relative bg-[#04090f] py-24 lg:py-32 overflow-hidden">
+      {/* ambient depth */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_50%_55%_at_82%_18%,rgba(230,168,79,0.08),transparent)] pointer-events-none" />
+      <div className="absolute inset-0 opacity-[0.04] pointer-events-none" style={{ backgroundImage: 'radial-gradient(#e6a84f 1px, transparent 1px)', backgroundSize: '34px 34px' }} />
 
-          <FadeIn direction="right" delay={0.15}>
-            <p className="font-inter text-[#e6a84f] font-semibold text-sm uppercase tracking-widest mb-3">Training Excellence</p>
-            <h2 className="font-poppins text-4xl font-bold text-[#0d4f64] mb-5">Every Worker Trained Before Deployment</h2>
-            <p className="font-inter text-[#6b7c8d] leading-relaxed mb-10">
-              At Sai Saktheeswari, we supply <strong className="text-[#1a2a3a]">professionally trained, discipline-first workforce</strong>.
-              Our senior supervisors personally oversee training at our Cuddalore centre — a standard maintained for 35 years.
-            </p>
-            <div className="space-y-5 mb-10">
-              {points.map((p, i) => (
-                <motion.div key={i} initial={{ opacity: 0, x: -16 }} whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }} transition={{ delay: i * 0.1, duration: 0.4 }}
-                  className="flex gap-4 items-start">
-                  <div className="w-10 h-10 bg-[#e8f4f8] rounded-lg flex items-center justify-center text-lg flex-shrink-0">{p.icon}</div>
-                  <div>
-                    <h4 className="font-poppins font-semibold text-[#1a2a3a] mb-0.5">{p.title}</h4>
-                    <p className="font-inter text-[#6b7c8d] text-sm">{p.desc}</p>
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid lg:grid-cols-2 gap-14 lg:gap-20 items-center">
+
+          {/* ── LEFT: Bento image mosaic + floating stat ── */}
+          <div className="relative">
+            <div className="grid grid-cols-2 gap-3 sm:gap-4">
+              {/* Featured wide */}
+              <motion.div style={{ y: yFeatured }}
+                initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: '-80px' }} transition={{ duration: 0.7, ease }}
+                className="col-span-2 relative rounded-2xl overflow-hidden ring-1 ring-white/10 group aspect-[16/10] shadow-[0_24px_60px_rgba(0,0,0,0.45)]">
+                <img src={photos[0].src} alt={photos[0].caption} className="w-full h-full object-cover scale-105 group-hover:scale-110 transition-transform duration-700 brightness-90" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#04090f]/85 via-transparent to-transparent" />
+                <span className="absolute top-3 left-3 w-7 h-7 border-t border-l border-[#e6a84f]/50 rounded-tl-lg" />
+                <span className="absolute bottom-3 left-3 font-inter text-white/85 text-xs bg-[#04090f]/55 backdrop-blur-md border border-white/10 rounded-lg px-3 py-1.5">{photos[0].caption}</span>
+              </motion.div>
+
+              {/* Two squares */}
+              {[photos[1], photos[2]].map((p, i) => (
+                <motion.div key={i}
+                  initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: '-60px' }} transition={{ duration: 0.6, delay: 0.1 + i * 0.1, ease }}
+                  className="relative rounded-2xl overflow-hidden ring-1 ring-white/10 group aspect-square">
+                  <img src={p.src} alt={p.caption} loading="lazy" className="w-full h-full object-cover scale-105 group-hover:scale-110 transition-transform duration-700 brightness-90" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#04090f]/75 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-3">
+                    <p className="font-inter text-white text-[11px]">{p.caption}</p>
                   </div>
                 </motion.div>
               ))}
+
+              {/* Wide bottom */}
+              <motion.div
+                initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: '-60px' }} transition={{ duration: 0.6, delay: 0.3, ease }}
+                className="col-span-2 relative rounded-2xl overflow-hidden ring-1 ring-white/10 group aspect-[16/6]">
+                <img src={photos[3].src} alt={photos[3].caption} loading="lazy" className="w-full h-full object-cover scale-105 group-hover:scale-110 transition-transform duration-700 brightness-90" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#04090f]/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-3">
+                  <p className="font-inter text-white text-[11px]">{photos[3].caption}</p>
+                </div>
+              </motion.div>
             </div>
-            <a href="/training"
-              className="inline-flex items-center gap-2 border-2 border-[#0d4f64] text-[#0d4f64] hover:bg-[#0d4f64] hover:text-white font-poppins font-semibold px-7 py-3 rounded-xl transition-all">
-              View Full Training Programme →
-            </a>
-          </FadeIn>
+
+            {/* Floating glass stat badge */}
+            <motion.div style={{ y: yBadge }}
+              initial={{ opacity: 0, scale: 0.9 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ duration: 0.6, delay: 0.4, ease }}
+              className="absolute -bottom-5 -right-2 sm:-right-4 bg-[#0a1422]/85 backdrop-blur-xl border border-[#e6a84f]/25 rounded-2xl px-5 py-4 shadow-[0_20px_50px_rgba(0,0,0,0.55)]">
+              <p className="font-poppins font-extrabold text-[#e6a84f] text-2xl leading-none">100%</p>
+              <p className="font-inter text-white/55 text-[10px] uppercase tracking-[0.16em] mt-1.5 leading-tight">Trained before<br />deployment</p>
+            </motion.div>
+          </div>
+
+          {/* ── RIGHT: Content ── */}
+          <div>
+            <motion.div initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, ease }}
+              className="inline-flex items-center gap-2.5 bg-[#e6a84f]/[0.08] border border-[#e6a84f]/25 rounded-full pl-2.5 pr-4 py-1.5 mb-6 backdrop-blur-md">
+              <span className="h-1.5 w-1.5 rounded-full bg-[#e6a84f]" />
+              <span className="font-inter text-[#f0be6a] text-[11px] font-semibold tracking-[0.22em] uppercase">Training Excellence</span>
+            </motion.div>
+
+            <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6, ease }}
+              className="font-poppins font-extrabold text-white text-3xl sm:text-4xl lg:text-5xl leading-[1.08] mb-5">
+              Every worker trained
+              <span className="block font-fraunces italic font-medium bg-gradient-to-r from-[#f0be6a] to-[#c8902e] bg-clip-text text-transparent">before deployment.</span>
+            </motion.h2>
+
+            <motion.p initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6, delay: 0.1, ease }}
+              className="font-inter text-white/55 text-base leading-relaxed mb-9 max-w-xl">
+              We supply a <span className="text-white/85 font-medium">discipline-first, professionally trained workforce</span>. Our senior supervisors oversee training at our Cuddalore centre — a standard upheld for 35 years.
+            </motion.p>
+
+            {/* Pillars — 2x2 glass cards */}
+            <div className="grid sm:grid-cols-2 gap-3.5 mb-9">
+              {points.map((p, i) => (
+                <motion.div key={p.title}
+                  initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: '-40px' }} transition={{ duration: 0.5, delay: i * 0.08, ease }}
+                  className="group relative bg-white/[0.03] border border-white/[0.07] hover:border-[#e6a84f]/30 rounded-2xl p-5 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_16px_40px_rgba(0,0,0,0.4)] overflow-hidden">
+                  <span className="absolute -top-12 -right-12 w-24 h-24 bg-[#e6a84f]/10 blur-2xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                  <div className="relative w-11 h-11 rounded-xl bg-[#e6a84f]/[0.1] border border-[#e6a84f]/20 flex items-center justify-center text-[#e6a84f] mb-4 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300">
+                    <p.Icon />
+                  </div>
+                  <h4 className="relative font-poppins font-bold text-white text-[15px] mb-1.5">{p.title}</h4>
+                  <p className="relative font-inter text-white/45 text-[13px] leading-relaxed">{p.desc}</p>
+                </motion.div>
+              ))}
+            </div>
+
+            <motion.div initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: 0.2, ease }}>
+              <a href="/training"
+                className="group relative overflow-hidden inline-flex items-center gap-2.5 bg-gradient-to-br from-[#f0be6a] via-[#e6a84f] to-[#c8902e] text-[#0a1a24] font-poppins font-bold text-sm px-7 py-3.5 rounded-xl shadow-[0_8px_30px_rgba(230,168,79,0.3)] hover:shadow-[0_12px_44px_rgba(230,168,79,0.5)] hover:-translate-y-0.5 transition-all duration-300">
+                <span className="relative z-10">View Full Training Programme</span>
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" className="relative z-10 transition-transform duration-300 group-hover:translate-x-1"><path d="M2 7h9.5M7.5 3l4 4-4 4" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
+              </a>
+            </motion.div>
+          </div>
         </div>
       </div>
     </section>
@@ -1227,34 +1293,154 @@ function TrainingSection() {
 
 /* ─── WHY US ─── */
 function WhyUsSection() {
+  const eo = [0.16, 1, 0.3, 1] as [number, number, number, number]; // classic expo-out
+  const wuIcon = { fill: 'none', stroke: 'currentColor', strokeWidth: 1.5, strokeLinecap: 'round' as const, strokeLinejoin: 'round' as const };
+
+  // Count-up for the 35 Years feature numeral
+  const featRef = useRef(null);
+  const featInView = useInView(featRef, { once: true, margin: '-90px' });
+  const [years, setYears] = useState(0);
+  useEffect(() => {
+    if (!featInView) return;
+    let raf = 0;
+    const start = performance.now();
+    const dur = 1500;
+    const tick = (t: number) => {
+      const p = Math.min((t - start) / dur, 1);
+      setYears(Math.round(35 * (1 - Math.pow(1 - p, 3))));
+      if (p < 1) raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [featInView]);
+
   const points = [
-    { icon: '🏆', title: '35 Years of Trust', desc: 'Established 1991 — three decades of dependable staffing and security service in South India.' },
-    { icon: '🎓', title: 'Trained Before Deployment', desc: 'Rigorous training in discipline, safety, communication and professional conduct — every guard, every time.' },
-    { icon: '⚖️', title: 'Full Statutory Compliance', desc: 'PF, ESI, Contract Labour Act — all handled by our in-house compliance team. Zero risk for you.' },
-    { icon: '📍', title: 'Local Expert Presence', desc: 'Two offices in Cuddalore & Puducherry. We know Tamil Nadu\'s workforce landscape deeply.' },
-    { icon: '👩‍💼', title: 'Female Security Staff', desc: 'Trained female security personnel for campuses, hospitals, and commercial complexes.' },
-    { icon: '⚡', title: '48-72hr Deployment', desc: 'Fast mobilisation of trained staff for standard requirements — WhatsApp for urgent needs.' },
+    {
+      title: 'Trained Before Deployment',
+      desc: 'Rigorous training in discipline, safety, communication and professional conduct — every guard, every time.',
+      span: 'lg:col-span-3 sm:col-span-2',
+      Icon: () => (<svg width="26" height="26" viewBox="0 0 24 24" {...wuIcon}><path d="M12 3 5 6v5c0 4.5 3 7.5 7 9 4-1.5 7-4.5 7-9V6l-7-3Z" /><path d="m9 12 2 2 4-4" /></svg>),
+    },
+    {
+      title: 'Full Statutory Compliance',
+      desc: 'PF, ESI & Contract Labour Act — handled end-to-end by our in-house team. Zero compliance risk for you.',
+      span: 'lg:col-span-2',
+      Icon: () => (<svg width="24" height="24" viewBox="0 0 24 24" {...wuIcon}><path d="M12 3v18M7 6h10M8 21h8" /><path d="M7 6 4 13a3 3 0 0 0 6 0L7 6ZM17 6l-3 7a3 3 0 0 0 6 0l-3-7Z" /></svg>),
+    },
+    {
+      title: 'Local Expert Presence',
+      desc: "Offices in Cuddalore & Puducherry. We know Tamil Nadu's workforce landscape deeply.",
+      span: 'lg:col-span-2',
+      Icon: () => (<svg width="24" height="24" viewBox="0 0 24 24" {...wuIcon}><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" /><circle cx="12" cy="10" r="3" /></svg>),
+    },
+    {
+      title: 'Female Security Staff',
+      desc: 'Trained female security personnel for campuses, hospitals and commercial complexes.',
+      span: 'lg:col-span-2',
+      Icon: () => (<svg width="24" height="24" viewBox="0 0 24 24" {...wuIcon}><circle cx="12" cy="8" r="4" /><path d="M5.5 21a6.5 6.5 0 0 1 13 0" /></svg>),
+    },
   ];
 
   return (
-    <section className="py-24 bg-[#f8f9fa]">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <FadeIn className="text-center mb-16">
-          <p className="font-inter text-[#e6a84f] font-semibold text-sm uppercase tracking-widest mb-3">Why Us</p>
-          <h2 className="font-poppins text-4xl font-bold text-[#0d4f64] mb-4">Why 100+ Businesses Trust Sai Saktheeswari</h2>
-        </FadeIn>
-        <StaggerChildren className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6" stagger={0.08}>
+    <section className="relative bg-[#050d1a] py-24 lg:py-32 overflow-hidden">
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_55%_50%_at_50%_0%,rgba(230,168,79,0.08),transparent)] pointer-events-none" />
+      <div className="absolute inset-0 opacity-[0.04] pointer-events-none" style={{ backgroundImage: 'radial-gradient(#e6a84f 1px, transparent 1px)', backgroundSize: '34px 34px' }} />
+
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Header */}
+        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.7, ease: eo }}
+          className="text-center mb-14 lg:mb-16">
+          <div className="inline-flex items-center gap-2.5 bg-[#e6a84f]/[0.1] border border-[#e6a84f]/30 rounded-full pl-2.5 pr-4 py-1.5 mb-7 backdrop-blur-md">
+            <span className="h-1.5 w-1.5 rounded-full bg-[#e6a84f]" />
+            <span className="font-inter text-[#f0be6a] text-[11px] font-semibold tracking-[0.28em] uppercase">Why Choose Us</span>
+          </div>
+          <h2 className="font-poppins font-extrabold text-white text-[2rem] sm:text-4xl lg:text-[3.25rem] leading-[1.06] tracking-[-0.02em]">
+            Why 100+ businesses trust
+            <span className="block font-fraunces italic font-medium bg-gradient-to-r from-[#f7d9a0] via-[#e6a84f] to-[#c8902e] bg-clip-text text-transparent pb-1 mt-1">Sai Saktheeswari.</span>
+          </h2>
+          <p className="font-inter text-white/65 text-base lg:text-[17px] leading-relaxed max-w-xl mx-auto mt-5">
+            Three decades of disciplined service — and the proof behind every promise.
+          </p>
+        </motion.div>
+
+        {/* Bento grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4 lg:gap-5">
+
+          {/* Feature — 35 Years */}
+          <motion.div ref={featRef} initial={{ opacity: 0, y: 26, scale: 0.97 }} whileInView={{ opacity: 1, y: 0, scale: 1 }} viewport={{ once: true, margin: '-60px' }} transition={{ duration: 0.8, ease: eo }}
+            className="group relative overflow-hidden rounded-3xl p-7 lg:p-9 sm:col-span-2 lg:col-span-3 bg-gradient-to-br from-[#0c1c28] to-[#04090f] border border-[#e6a84f]/25 hover:border-[#e6a84f]/45 transition-colors duration-500">
+            <div className="absolute -top-16 -right-10 w-52 h-52 bg-[#e6a84f]/10 blur-3xl rounded-full opacity-70 group-hover:opacity-100 transition-opacity duration-500" />
+            {/* one-time glass reflection sweep */}
+            <motion.span initial={{ x: '-130%' }} whileInView={{ x: '130%' }} viewport={{ once: true }} transition={{ duration: 1.2, delay: 0.45, ease: 'easeInOut' }}
+              className="absolute inset-y-0 left-0 w-1/3 bg-gradient-to-r from-transparent via-white/[0.07] to-transparent skew-x-12 pointer-events-none" />
+            <div className="relative flex items-start justify-between gap-4">
+              <div className="w-12 h-12 rounded-2xl bg-[#e6a84f]/[0.14] border border-[#e6a84f]/30 flex items-center justify-center text-[#e6a84f] group-hover:scale-105 transition-transform duration-300">
+                <svg width="26" height="26" viewBox="0 0 24 24" {...wuIcon}><path d="M8 21h8M12 17v4M6 4h12v3a6 6 0 0 1-12 0V4Z" /><path d="M6 6H3.5v1.5A3.5 3.5 0 0 0 6 11M18 6h2.5v1.5A3.5 3.5 0 0 1 18 11" /></svg>
+              </div>
+              <span className="font-inter text-[#e6a84f]/75 text-[10px] tracking-[0.3em] uppercase mt-2">Since 1991</span>
+            </div>
+            <div className="relative mt-6">
+              <span className="font-fraunces font-semibold leading-none tabular-nums bg-gradient-to-br from-[#f7d9a0] via-[#f0be6a] to-[#c8902e] bg-clip-text text-transparent text-[5.5rem] lg:text-[7.5rem] drop-shadow-[0_4px_30px_rgba(230,168,79,0.2)]">{years}</span>
+              <h3 className="font-poppins font-bold text-white text-2xl lg:text-[1.7rem] tracking-[-0.01em] mt-1">Years of Trust</h3>
+              <p className="font-inter text-white/70 text-[15px] leading-relaxed mt-3.5 max-w-md">
+                Three decades of dependable staffing and security service across South India — built relationship by relationship.
+              </p>
+            </div>
+          </motion.div>
+
+          {/* Standard cards */}
           {points.map((p, i) => (
-            <StaggerItem key={i}>
-              <motion.div whileHover={{ y: -4 }}
-                className="bg-white rounded-2xl p-8 border border-gray-100 shadow-sm hover:shadow-lg transition-all text-center h-full">
-                <div className="text-4xl mb-5">{p.icon}</div>
-                <h3 className="font-poppins font-bold text-lg text-[#1a2a3a] mb-3">{p.title}</h3>
-                <p className="font-inter text-[#6b7c8d] text-sm leading-relaxed">{p.desc}</p>
-              </motion.div>
-            </StaggerItem>
+            <motion.div key={p.title}
+              initial={{ opacity: 0, y: 24, scale: 0.97 }} whileInView={{ opacity: 1, y: 0, scale: 1 }} viewport={{ once: true, margin: '-40px' }} transition={{ duration: 0.65, delay: 0.08 + i * 0.09, ease: eo }}
+              className={`group relative overflow-hidden rounded-3xl p-6 lg:p-7 bg-white/[0.035] border border-white/[0.08] hover:border-[#e6a84f]/35 transition-all duration-300 hover:-translate-y-1.5 hover:shadow-[0_22px_50px_rgba(0,0,0,0.45)] ${p.span || ''}`}>
+              <span className="absolute -top-12 -right-12 w-24 h-24 bg-[#e6a84f]/10 blur-2xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              <div className="relative w-12 h-12 rounded-2xl bg-[#e6a84f]/[0.12] border border-[#e6a84f]/25 flex items-center justify-center text-[#e6a84f] mb-5 group-hover:scale-110 group-hover:rotate-[6deg] transition-transform duration-300">
+                <p.Icon />
+              </div>
+              <h3 className="relative font-poppins font-bold text-white text-[17px] tracking-[-0.01em] mb-2">{p.title}</h3>
+              <p className="relative font-inter text-white/70 text-sm leading-relaxed">{p.desc}</p>
+            </motion.div>
           ))}
-        </StaggerChildren>
+
+          {/* 48-72hr — small */}
+          <motion.div initial={{ opacity: 0, y: 24, scale: 0.97 }} whileInView={{ opacity: 1, y: 0, scale: 1 }} viewport={{ once: true, margin: '-40px' }} transition={{ duration: 0.65, delay: 0.36, ease: eo }}
+            className="group relative overflow-hidden rounded-3xl p-6 lg:p-7 lg:col-span-2 bg-white/[0.035] border border-white/[0.08] hover:border-[#e6a84f]/35 transition-all duration-300 hover:-translate-y-1.5 hover:shadow-[0_22px_50px_rgba(0,0,0,0.45)]">
+            <span className="absolute -top-12 -right-12 w-24 h-24 bg-[#e6a84f]/10 blur-2xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            <div className="relative w-12 h-12 rounded-2xl bg-[#e6a84f]/[0.12] border border-[#e6a84f]/25 flex items-center justify-center text-[#e6a84f] mb-5 group-hover:scale-110 group-hover:rotate-[6deg] transition-transform duration-300">
+              <svg width="24" height="24" viewBox="0 0 24 24" {...wuIcon}><path d="M13 2 4 14h7l-1 8 9-12h-7l1-8Z" /></svg>
+            </div>
+            <h3 className="relative font-poppins font-bold text-white text-[17px] tracking-[-0.01em] mb-2">48–72hr Deployment</h3>
+            <p className="relative font-inter text-white/70 text-sm leading-relaxed">Fast mobilisation of trained staff for standard requirements — WhatsApp us for urgent needs.</p>
+          </motion.div>
+
+          {/* CTA tile */}
+          <motion.div initial={{ opacity: 0, y: 24, scale: 0.98 }} whileInView={{ opacity: 1, y: 0, scale: 1 }} viewport={{ once: true, margin: '-40px' }} transition={{ duration: 0.7, delay: 0.42, ease: eo }}
+            className="relative overflow-hidden rounded-3xl p-7 lg:p-8 sm:col-span-2 lg:col-span-4 bg-gradient-to-br from-[#0d2230] to-[#04090f] border border-[#e6a84f]/25 flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div className="absolute -bottom-16 -left-10 w-52 h-52 bg-[#e6a84f]/10 blur-3xl rounded-full" />
+            <div className="relative">
+              <h3 className="font-poppins font-extrabold text-white text-xl lg:text-2xl leading-tight tracking-[-0.01em]">Ready to strengthen<br className="hidden md:block" /> your workforce?</h3>
+              <p className="font-inter text-white/65 text-sm mt-2.5">Trained, verified staff — deployed in 48–72 hours.</p>
+            </div>
+            <div className="relative flex flex-col sm:flex-row md:flex-col gap-2.5 flex-shrink-0">
+              <a href="/contact"
+                className="group relative overflow-hidden inline-flex items-center justify-center gap-2 bg-gradient-to-br from-[#f0be6a] via-[#e6a84f] to-[#c8902e] text-[#0a1a24] font-poppins font-bold text-[13px] px-6 py-3 rounded-xl shadow-[0_8px_24px_rgba(230,168,79,0.3)] hover:-translate-y-0.5 transition-all duration-300">
+                <span className="relative z-10">Request Workforce</span>
+                <svg width="13" height="13" viewBox="0 0 14 14" fill="none" className="relative z-10 transition-transform duration-300 group-hover:translate-x-1"><path d="M2 7h9.5M7.5 3l4 4-4 4" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
+              </a>
+              <a href={`https://wa.me/${COMPANY.phone.whatsapp}?text=Hello, I am interested in your staffing services.`} target="_blank" rel="noopener noreferrer"
+                className="inline-flex items-center justify-center gap-2 bg-white/[0.06] hover:bg-white/[0.12] border border-white/15 hover:border-[#e6a84f]/40 text-white font-poppins font-semibold text-[13px] px-6 py-3 rounded-xl transition-all duration-300">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" className="text-[#25D366]"><path d="M12 2C6.48 2 2 6.48 2 12c0 1.85.5 3.58 1.38 5.06L2 22l5.07-1.33A9.96 9.96 0 0 0 12 22c5.52 0 10-4.48 10-10S17.52 2 12 2Zm5.47 12.38c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.16-.17.2-.35.22-.64.08-.3-.15-1.26-.46-2.4-1.48-.88-.79-1.48-1.76-1.65-2.06-.17-.3-.02-.46.13-.6.13-.14.3-.35.44-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.08-.15-.67-1.61-.92-2.21-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48 0 1.46 1.06 2.88 1.21 3.07.15.2 2.1 3.2 5.08 4.49.71.31 1.26.49 1.69.62.71.23 1.36.2 1.87.12.57-.09 1.76-.72 2.01-1.41.25-.69.25-1.29.17-1.41-.07-.12-.27-.2-.57-.35Z" /></svg>
+                Talk on WhatsApp
+              </a>
+              <a href="/contact"
+                className="inline-flex items-center justify-center gap-1.5 text-white/65 hover:text-[#e6a84f] font-inter font-medium text-xs transition-colors duration-300">
+                Schedule a consultation
+                <svg width="12" height="12" viewBox="0 0 14 14" fill="none"><path d="M2 7h9.5M7.5 3l4 4-4 4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>
+              </a>
+            </div>
+          </motion.div>
+        </div>
       </div>
     </section>
   );
@@ -1303,7 +1489,7 @@ const INDUSTRIES_CINEMATIC = [
     n: '07', name: 'Commercial Complexes', headline: 'Order within constant motion.',
     body: 'Malls, hotels and commercial complexes see thousands pass through daily. Our officers maintain calm, controlled, professional environments throughout.',
     proof: ['Crowd management', 'Surveillance posts', 'Customer assistance'],
-    img: '/images/dsc/guard-post-1.jpg',
+    img: '/images/dsc/campus-patrol-1.jpg',
   },
   {
     n: '08', name: 'Government Institutions', headline: 'Trusted with public responsibility.',
