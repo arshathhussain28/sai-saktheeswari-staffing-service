@@ -22,133 +22,12 @@ function ScrollReveal({ children, className }: { children: React.ReactNode; clas
   );
 }
 
-/* ─── NAVBAR ─── */
-function Navbar() {
-  const [scrolled, setScrolled] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false);
-
-  useEffect(() => {
-    const fn = () => setScrolled(window.scrollY > 60);
-    window.addEventListener('scroll', fn, { passive: true });
-    return () => window.removeEventListener('scroll', fn);
-  }, []);
-
-  return (
-    <motion.nav
-      initial={{ y: -100, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.75, ease: [0.22, 1, 0.36, 1] }}
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-        scrolled
-          ? 'bg-[#04090f]/93 backdrop-blur-xl border-b border-white/[0.06] shadow-[0_4px_40px_rgba(0,0,0,0.5)] py-3'
-          : 'bg-gradient-to-b from-[#04090f]/30 to-transparent backdrop-blur-[3px] py-6'
-      }`}
-    >
-      <div className="max-w-[1440px] mx-auto px-6 sm:px-10 lg:px-14 flex items-center justify-between">
-
-        {/* Logo */}
-        <a href="/" className="flex items-center gap-3.5 group flex-shrink-0">
-          <motion.div
-            animate={{ scale: scrolled ? 0.84 : 1 }}
-            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-            className="w-10 h-10 rounded-full overflow-hidden ring-1 ring-[#e6a84f]/30 group-hover:ring-[#e6a84f]/65 transition-all duration-500">
-            <img src="/images/logo.jpeg" alt="Sai Saktheeswari Staffing Services" className="w-full h-full object-cover" />
-          </motion.div>
-          <motion.div animate={{ scale: scrolled ? 0.93 : 1 }} transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}>
-            <p className="font-poppins font-semibold text-white text-[13px] leading-tight tracking-[-0.01em]">Sai Saktheeswari</p>
-            <p className="font-inter text-[#e6a84f]/70 text-[10px] tracking-[0.22em] uppercase mt-0.5">Staffing Services</p>
-          </motion.div>
-        </a>
-
-        {/* Desktop Nav Links */}
-        <nav className="hidden lg:flex items-center gap-1">
-          {NAV_LINKS.map((l) => (
-            <a key={l.href} href={l.href}
-              className="relative group px-4 py-2 font-inter text-[12.5px] font-medium text-white/58 hover:text-white transition-colors duration-300 tracking-[0.025em]">
-              {l.label}
-              <span className="absolute bottom-[3px] left-4 right-4 h-px bg-[#e6a84f] origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-400 ease-out" />
-            </a>
-          ))}
-        </nav>
-
-        {/* Desktop CTA */}
-        <a href="/contact"
-          className="hidden lg:flex group items-center gap-2.5 relative overflow-hidden
-            bg-gradient-to-br from-[#f0be6a] via-[#e6a84f] to-[#c8902e]
-            text-[#0a1a24] font-poppins font-bold text-[13px] tracking-[0.02em]
-            px-[22px] py-[10px] rounded-[9px]
-            shadow-[0_2px_14px_rgba(230,168,79,0.28),0_1px_0_rgba(255,255,255,0.22)_inset]
-            hover:shadow-[0_4px_24px_rgba(230,168,79,0.44),0_1px_0_rgba(255,255,255,0.28)_inset]
-            hover:-translate-y-[2px] transition-all duration-400 ease-out">
-          <span className="relative z-10">Request Workforce</span>
-          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"
-            className="relative z-10 transition-transform duration-300 group-hover:translate-x-[3px] flex-shrink-0">
-            <path d="M1.5 6h9M7 2.5l3.5 3.5L7 9.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
-          <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/15 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out pointer-events-none" />
-        </a>
-
-        {/* Mobile hamburger */}
-        <button onClick={() => setMenuOpen(!menuOpen)} aria-label={menuOpen ? 'Close menu' : 'Open menu'}
-          className="lg:hidden flex flex-col gap-[5px] p-1.5">
-          <motion.span animate={{ rotate: menuOpen ? 45 : 0, y: menuOpen ? 7 : 0 }}
-            transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-            className="block h-[1.5px] w-5 bg-white rounded-full origin-center" />
-          <motion.span animate={{ opacity: menuOpen ? 0 : 1 }}
-            transition={{ duration: 0.2 }}
-            className="block h-[1.5px] w-3.5 bg-white/50 rounded-full" />
-          <motion.span animate={{ rotate: menuOpen ? -45 : 0, y: menuOpen ? -7 : 0 }}
-            transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-            className="block h-[1.5px] w-5 bg-white rounded-full origin-center" />
-        </button>
-      </div>
-
-      {/* Mobile menu */}
-      <AnimatePresence>
-        {menuOpen && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-            className="lg:hidden overflow-hidden bg-[#04090f]/97 backdrop-blur-2xl border-t border-white/[0.06]">
-            <div className="px-6 pt-5 pb-8 flex flex-col">
-              {NAV_LINKS.map((l, i) => (
-                <motion.a key={l.href} href={l.href}
-                  initial={{ opacity: 0, x: -14 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.04 + i * 0.04, duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-                  onClick={() => setMenuOpen(false)}
-                  className="font-inter text-[15px] font-medium text-white/65 hover:text-white py-3 border-b border-white/[0.05] last:border-0 transition-colors duration-250 tracking-[0.01em]">
-                  {l.label}
-                </motion.a>
-              ))}
-              <motion.a href="/contact"
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.32, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-                className="mt-6 flex items-center justify-center gap-2.5
-                  bg-gradient-to-r from-[#f0be6a] to-[#c8902e] text-[#0a1a24]
-                  font-poppins font-bold text-sm tracking-[0.03em]
-                  py-3.5 rounded-xl shadow-[0_4px_16px_rgba(230,168,79,0.3)]">
-                Request Workforce
-                <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
-                  <path d="M2 6.5h9M7.5 3l3.5 3.5L7.5 10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              </motion.a>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </motion.nav>
-  );
-}
+/* Navbar extracted → components/layout/Navbar.tsx (rendered in app/layout.tsx) */
 
 /* ─── HERO ─── */
 const HERO_SLIDES = [
-  // Image 4 first — user's specified initial center: ceremony with Indian flag
-  { src: '/images/home/ceremony-flag.jpg', label: 'Republic Day ceremony at client site' },
-  { src: '/images/home/ceremony-group.jpg', label: 'Deployed guard team — ceremonial event' },
+  { src: '/images/dsc/formation-aerial.jpg', label: 'Guard team in disciplined formation' },
+  { src: '/images/dsc/female-guards-salute.jpg', label: 'Trained female security officers' },
   { src: '/images/home/arm-badge-patch.jpg', label: 'Sai Saktheeswari — Since 1991' },
   { src: '/images/home/guards-march.jpg', label: 'Guards in professional formation' },
   { src: '/images/home/badge-uniform.jpg', label: 'Uniform & branding standards' },
@@ -185,21 +64,25 @@ function Hero() {
     setCurrent(idx);
   };
 
-  const headline = ["South India's Most", 'Trusted Staffing', 'Partner Since 1991'];
+  const headline = ["South India's Most", 'Trusted Staffing Partner'];
 
   return (
     <section className="relative min-h-screen overflow-hidden bg-[#060f18]">
-      {/* Ambient background — blurred active image */}
+      {/* Ambient cinematic background — active image, layered for depth + legibility */}
       <AnimatePresence mode="sync">
         <motion.div key={`bg-${current}`} className="absolute inset-0 z-0"
           initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
           transition={{ duration: 1.2 }}>
           <motion.img style={{ y: bgY }}
             src={HERO_SLIDES[current].src} alt="" aria-hidden
-            className="absolute inset-0 w-full h-full object-cover scale-110 blur-sm brightness-[0.38]" />
+            className="absolute inset-0 w-full h-full object-cover scale-110 blur-[3px] brightness-[0.5]" />
         </motion.div>
       </AnimatePresence>
-      <div className="absolute inset-0 z-0 bg-gradient-to-br from-[#0d4f64]/60 via-transparent to-[#0e1f2f]/80" />
+      {/* Directional scrim — dark behind text (left), image breathes (right) */}
+      <div className="absolute inset-0 z-0 bg-gradient-to-r from-[#04090f]/96 via-[#050d1a]/82 to-[#050d1a]/55" />
+      <div className="absolute inset-0 z-0 bg-gradient-to-t from-[#04090f] via-transparent to-[#04090f]/70" />
+      {/* Warm gold ambient glow */}
+      <div className="absolute inset-0 z-0 bg-[radial-gradient(ellipse_50%_60%_at_15%_50%,rgba(230,168,79,0.10),transparent)] pointer-events-none" />
 
       <motion.div style={{ opacity }}
         className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-20 min-h-screen flex items-center">
@@ -209,23 +92,34 @@ function Hero() {
           <div>
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3, duration: 0.6 }}
-              className="inline-flex items-center gap-2 bg-[#e6a84f]/15 border border-[#e6a84f]/30 rounded-full px-4 py-1.5 mb-8">
-              <span className="text-[#e6a84f] text-sm">⭐</span>
-              <span className="font-inter text-[#e6a84f] text-sm font-medium">Established 1991 — 35 Years of Excellence</span>
+              className="inline-flex items-center gap-2.5 bg-[#e6a84f]/[0.08] border border-[#e6a84f]/25 rounded-full pl-2.5 pr-4 py-1.5 mb-8 backdrop-blur-md">
+              <span className="relative flex h-1.5 w-1.5">
+                <span className="absolute inline-flex h-full w-full rounded-full bg-[#e6a84f] opacity-60 animate-ping" />
+                <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-[#e6a84f]" />
+              </span>
+              <span className="font-inter text-[#f0be6a] text-[11px] sm:text-xs font-semibold tracking-[0.18em] uppercase">Established 1991 · 35 Years of Excellence</span>
             </motion.div>
 
-            <div className="mb-6">
+            <h1 className="mb-6">
               {headline.map((line, li) => (
                 <div key={li} className="overflow-hidden">
-                  <motion.h1
+                  <motion.span
                     initial={{ y: '110%' }} animate={{ y: 0 }}
                     transition={{ duration: 0.75, delay: 0.45 + li * 0.15, ease }}
-                    className={`font-poppins font-extrabold leading-[1.06] block text-4xl sm:text-5xl lg:text-5xl xl:text-6xl ${li === 1 ? 'text-[#e6a84f]' : 'text-white'}`}>
+                    className="font-poppins font-extrabold leading-[1.05] block text-4xl sm:text-5xl lg:text-[3.3rem] xl:text-6xl text-white">
                     {line}
-                  </motion.h1>
+                  </motion.span>
                 </div>
               ))}
-            </div>
+              <div className="overflow-hidden mt-2">
+                <motion.span
+                  initial={{ y: '110%' }} animate={{ y: 0 }}
+                  transition={{ duration: 0.8, delay: 0.78, ease }}
+                  className="font-fraunces italic font-medium block text-2xl sm:text-3xl lg:text-[2.1rem] xl:text-4xl leading-[1.15] pb-1 bg-gradient-to-r from-[#f0be6a] via-[#e6a84f] to-[#c8902e] bg-clip-text text-transparent">
+                  Where discipline meets dependability.
+                </motion.span>
+              </div>
+            </h1>
 
             <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.0, duration: 0.6 }}
               className="font-inter text-base text-white/70 mb-1">
@@ -238,23 +132,42 @@ function Hero() {
 
             <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 1.2, duration: 0.6 }}
-              className="flex flex-col sm:flex-row gap-3 mb-10">
+              className="flex flex-col sm:flex-row gap-3.5 mb-10">
+              {/* Primary — gold gradient, shimmer sweep, glow, arrow */}
               <a href="/contact"
-                className="bg-[#e6a84f] hover:bg-[#c8902e] text-[#0e1f2f] font-poppins font-bold px-7 py-3.5 rounded-xl transition-all shadow-xl hover:shadow-[#e6a84f]/40 hover:-translate-y-0.5 text-center text-sm">
-                Request Workforce Support →
+                className="group relative overflow-hidden inline-flex items-center justify-center gap-2.5
+                  bg-gradient-to-br from-[#f0be6a] via-[#e6a84f] to-[#c8902e] text-[#0a1a24]
+                  font-poppins font-bold text-sm tracking-[0.01em] px-7 py-3.5 rounded-xl
+                  shadow-[0_8px_30px_rgba(230,168,79,0.35)] hover:shadow-[0_12px_44px_rgba(230,168,79,0.55)]
+                  hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] transition-all duration-300 ease-out">
+                <span className="relative z-10">Request Workforce Support</span>
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" className="relative z-10 transition-transform duration-300 group-hover:translate-x-1">
+                  <path d="M2 7h9.5M7.5 3l4 4-4 4" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+                <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out" />
               </a>
+              {/* Secondary — glass, WhatsApp SVG, press feedback */}
               <a href={`https://wa.me/${COMPANY.phone.whatsapp}?text=Hello, I am interested in your staffing services.`}
                 target="_blank" rel="noopener noreferrer"
-                className="border-2 border-white/50 text-white hover:bg-white hover:text-[#0d4f64] font-poppins font-semibold px-7 py-3.5 rounded-xl transition-all text-center text-sm">
-                💬 Talk on WhatsApp
+                className="group inline-flex items-center justify-center gap-2.5
+                  bg-white/[0.06] hover:bg-white/[0.12] backdrop-blur-md border border-white/20 hover:border-[#e6a84f]/50
+                  text-white font-poppins font-semibold text-sm px-7 py-3.5 rounded-xl
+                  active:scale-[0.98] transition-all duration-300 ease-out">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor" className="text-[#25D366] group-hover:scale-110 transition-transform duration-300">
+                  <path d="M17.6 6.32A7.85 7.85 0 0 0 12 4a7.94 7.94 0 0 0-6.9 11.9L4 20l4.2-1.1a7.9 7.9 0 0 0 3.8 1h.01a7.94 7.94 0 0 0 5.6-13.58ZM12 18.5h-.01a6.5 6.5 0 0 1-3.3-.9l-.24-.14-2.45.64.65-2.39-.16-.25A6.5 6.5 0 1 1 12 18.5Zm3.6-4.86c-.2-.1-1.17-.58-1.35-.64s-.31-.1-.44.1-.5.63-.62.76-.23.15-.43.05a5.3 5.3 0 0 1-2.67-2.33c-.2-.35.18-.32.55-1.06a.36.36 0 0 0-.02-.34c-.05-.1-.44-1.07-.6-1.46s-.32-.33-.44-.34h-.38a.73.73 0 0 0-.53.25 2.2 2.2 0 0 0-.68 1.62 3.8 3.8 0 0 0 .8 2.02 8.7 8.7 0 0 0 3.32 2.93c1.95.85 1.95.57 2.3.54a1.98 1.98 0 0 0 1.3-.92 1.6 1.6 0 0 0 .12-.92c-.06-.08-.19-.13-.39-.23Z"/>
+                </svg>
+                Talk on WhatsApp
               </a>
             </motion.div>
 
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.4, duration: 0.6 }}
-              className="flex flex-wrap gap-4 text-white/45 text-xs font-inter">
-              {['Licensed & Registered', 'PF & ESI Compliant', '500+ Workforce Deployed', '48-72hr Deployment'].map(t => (
+              className="flex flex-wrap gap-x-5 gap-y-2.5 text-white/55 text-xs font-inter">
+              {['Licensed & Registered', 'PF & ESI Compliant', '500+ Workforce Deployed', '48–72hr Deployment'].map(t => (
                 <span key={t} className="flex items-center gap-1.5">
-                  <span className="text-[#e6a84f]">✓</span> {t}
+                  <svg width="13" height="13" viewBox="0 0 14 14" fill="none" className="text-[#e6a84f] flex-shrink-0">
+                    <path d="M2 7.5l3 3 7-8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                  {t}
                 </span>
               ))}
             </motion.div>
@@ -391,9 +304,9 @@ function IndustryIcon() {
 }
 
 const LEGACY_STATS = [
-  { value: 35, suffix: '+', label: 'Years of Excellence', sub: 'Since 1991', Icon: TrophyIcon, img: '/images/founder/rajasekar-office.jpg' },
+  { value: 35, suffix: '+', label: 'Years of Excellence', sub: 'Since 1991', Icon: TrophyIcon, img: '/images/dsc/formation-aerial.jpg' },
   { value: 500, suffix: '+', label: 'Professionals Deployed', sub: 'Trained workforce', Icon: NetworkIcon, img: '/images/dsc/formation-aerial.jpg' },
-  { value: 100, suffix: '+', label: 'Trusted Clients', sub: 'Long-term partnerships', Icon: PartnershipIcon, img: '/images/home/ceremony-flag.jpg' },
+  { value: 100, suffix: '+', label: 'Trusted Clients', sub: 'Long-term partnerships', Icon: PartnershipIcon, img: '/images/dsc/formation-aerial.jpg' },
   { value: 2, suffix: '', label: 'Operational Offices', sub: 'Cuddalore · Puducherry', Icon: BuildingIcon, img: '/images/dsc/campus-signage.jpg' },
   { value: 5, suffix: '', label: 'Industries Served', sub: 'Across South India', Icon: IndustryIcon, img: '/images/dsc/deployment-campus-1.jpg' },
 ];
@@ -445,8 +358,8 @@ function CorporateIcon() {
 const TRUST_INDUSTRIES = [
   { name: 'Manufacturing', Icon: ManufacturingIcon, img: '/images/dsc/deployment-campus-1.jpg', desc: 'Plant & factory floor security' },
   { name: 'Healthcare', Icon: HealthcareIcon, img: '/images/dsc/female-guards-salute.jpg', desc: 'Hospital & campus personnel' },
-  { name: 'Education', Icon: EducationIcon, img: '/images/dsc/campus-wide.jpg', desc: 'Institutional campus protection' },
-  { name: 'Industrial', Icon: IndustrialIcon, img: '/images/dsc/guards-patrol.jpg', desc: 'Site patrol & access control' },
+  { name: 'Education', Icon: EducationIcon, img: '/images/dsc/campus-deployment-2.jpg', desc: 'Institutional campus protection' },
+  { name: 'Industrial', Icon: IndustrialIcon, img: '/images/dsc/guard-lineup-3.jpg', desc: 'Site patrol & access control' },
   { name: 'Corporate', Icon: CorporateIcon, img: '/images/dsc/team-group-1.jpg', desc: 'Office & facility management' },
 ];
 
@@ -455,10 +368,10 @@ const SHOWCASE_IMAGES = [
   { src: '/images/dsc/formation-aerial.jpg', label: 'Workforce in formation' },
   { src: '/images/home/guards-march.jpg', label: 'Disciplined deployment' },
   { src: '/images/dsc/female-guards-salute.jpg', label: 'Trained female personnel' },
-  { src: '/images/home/ceremony-flag.jpg', label: 'Ceremonial honour guard' },
+  { src: '/images/dsc/campus-patrol-1.jpg', label: 'Ceremonial honour guard' },
   { src: '/images/dsc/guard-ceremonial.jpg', label: 'Ceremonial post' },
   { src: '/images/home/arm-badge-patch.jpg', label: 'Since 1991 — verified standards' },
-  { src: '/images/dsc/campus-wide.jpg', label: 'Campus deployment' },
+  { src: '/images/dsc/campus-deployment-2.jpg', label: 'Campus deployment' },
   { src: '/images/dsc/team-group-1.jpg', label: 'Professional team' },
 ];
 
@@ -471,7 +384,7 @@ const LEGACY_CHAPTERS = [
   {
     year: '1991', kicker: 'The Beginning',
     lines: ['One Vision.', 'One Team.', 'One Commitment.'],
-    img: '/images/home/ceremony-flag.jpg',
+    img: '/images/dsc/guard-lineup-1.jpg',
   },
   {
     year: '2000', kicker: 'Expansion',
@@ -544,40 +457,134 @@ function LegacyChapter({ chapter }: { chapter: typeof LEGACY_CHAPTERS[0] }) {
 }
 
 /* — 2025 finale: figures as luxury typography — */
+/* Count-up hook — eases to target on activate; respects reduced-motion */
+function useCountUp(target: number, active: boolean, duration = 1800) {
+  const [n, setN] = useState(0);
+  useEffect(() => {
+    if (!active) return;
+    if (typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      setN(target);
+      return;
+    }
+    let raf = 0;
+    const start = performance.now();
+    const tick = (t: number) => {
+      const p = Math.min((t - start) / duration, 1);
+      setN(Math.round(target * (1 - Math.pow(1 - p, 3))));
+      if (p < 1) raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [active, target, duration]);
+  return n;
+}
+
+/* Glassmorphic metric card — animated counter + hover lift + gold glow */
+function LegacyStatCard({ stat, index, active }: { stat: typeof LEGACY_STATS[0]; index: number; active: boolean }) {
+  const n = useCountUp(stat.value, active);
+  const Icon = stat.Icon;
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 30 }}
+      animate={active ? { opacity: 1, y: 0 } : {}}
+      transition={{ delay: 0.35 + index * 0.1, duration: 0.7, ease }}
+      className="group relative overflow-hidden rounded-2xl bg-white/[0.035] backdrop-blur-xl border border-white/[0.08] hover:border-[#e6a84f]/40 p-5 sm:p-6 lg:p-7 transition-all duration-500 hover:-translate-y-1.5 hover:shadow-[0_28px_64px_rgba(0,0,0,0.55)]"
+    >
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_0%,rgba(230,168,79,0.12),transparent_70%)] opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+      <div className="relative">
+        <div className="w-10 h-10 rounded-xl bg-[#e6a84f]/[0.1] border border-[#e6a84f]/20 text-[#e6a84f] flex items-center justify-center mb-5 group-hover:scale-110 group-hover:border-[#e6a84f]/45 transition-all duration-300">
+          <Icon />
+        </div>
+        <p className="font-poppins font-extrabold text-white leading-none mb-2.5 tabular-nums" style={{ fontSize: 'clamp(2.3rem, 5vw, 3.4rem)' }}>
+          {n}<span className="text-[#e6a84f]">{stat.suffix}</span>
+        </p>
+        <p className="font-poppins font-semibold text-white/90 text-[13px] sm:text-sm leading-tight">{stat.label}</p>
+        <p className="font-inter text-white/40 text-[11px] sm:text-xs mt-1">{stat.sub}</p>
+      </div>
+    </motion.div>
+  );
+}
+
 function LegacyFinale() {
   const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { once: true, margin: '-22%' });
+  const inView = useInView(ref, { once: true, margin: '-18%' });
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] });
-  const imgScale = useTransform(scrollYProgress, [0, 1], [1.25, 1.05]);
+  const imgScale = useTransform(scrollYProgress, [0, 1], [1.2, 1.05]);
+  const imgY = useTransform(scrollYProgress, [0, 1], ['-3%', '6%']);
+
+  // Mouse-parallax depth for the ambient gold glow
+  const mx = useMotionValue(0);
+  const my = useMotionValue(0);
+  const glowX = useSpring(useTransform(mx, [-0.5, 0.5], [-26, 26]), { stiffness: 60, damping: 20 });
+  const glowY = useSpring(useTransform(my, [-0.5, 0.5], [-22, 22]), { stiffness: 60, damping: 20 });
+  const onMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const r = e.currentTarget.getBoundingClientRect();
+    mx.set((e.clientX - r.left) / r.width - 0.5);
+    my.set((e.clientY - r.top) / r.height - 0.5);
+  };
+
+  const feature = LEGACY_STATS[0];
+  const cards = LEGACY_STATS.slice(1);
+  const years = useCountUp(feature.value, inView);
 
   return (
-    <div ref={ref} className="relative min-h-screen w-full overflow-hidden flex items-center py-28 lg:py-32">
-      <motion.img style={{ scale: imgScale }} src="/images/dsc/guard-lineup-1.jpg" alt=""
-        className="absolute inset-0 w-full h-full object-cover" />
-      <div className="absolute inset-0 bg-[#04090f]/90" />
-      <div className="absolute inset-0 bg-[linear-gradient(180deg,#04090f_0%,rgba(4,9,15,0.55)_50%,#04090f_100%)]" />
+    <div ref={ref} onMouseMove={onMove}
+      className="relative min-h-screen w-full overflow-hidden flex items-center py-24 lg:py-32">
+      {/* Cinematic background — now clearly visible */}
+      <motion.img style={{ scale: imgScale, y: imgY }} src="/images/dsc/formation-aerial.jpg" alt=""
+        className="absolute inset-0 w-full h-[112%] object-cover will-change-transform" />
+      <div className="absolute inset-0 bg-[#04090f]/68" />
+      <div className="absolute inset-0 bg-[linear-gradient(180deg,#04090f_0%,rgba(4,9,15,0.4)_45%,#04090f_100%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_78%_65%_at_50%_42%,transparent,rgba(4,9,15,0.72))]" />
+      <motion.div style={{ x: glowX, y: glowY }}
+        className="absolute inset-0 bg-[radial-gradient(ellipse_45%_45%_at_78%_22%,rgba(230,168,79,0.13),transparent_60%)] pointer-events-none" />
+      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#e6a84f]/25 to-transparent" />
 
-      <div className="relative z-10 max-w-6xl mx-auto px-6 sm:px-8 w-full">
-        <motion.div initial={{ opacity: 0, y: 24 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 1 }}
-          className="text-center mb-14 lg:mb-20">
-          <p className="font-inter text-[#e6a84f] text-[11px] tracking-[0.55em] uppercase mb-6">2025</p>
-          <RevealHeading inView={inView} text="Three Decades of Trust"
-            className="font-poppins text-4xl md:text-6xl font-extrabold text-white" />
+      <div className="relative z-10 max-w-7xl mx-auto px-5 sm:px-8 w-full">
+        {/* Heading */}
+        <motion.div initial={{ opacity: 0, y: 26 }} animate={inView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.9, ease }} className="max-w-3xl mb-12 lg:mb-16">
+          <div className="inline-flex items-center gap-2.5 mb-6">
+            <span className="w-8 h-px bg-[#e6a84f]" />
+            <span className="font-inter text-[#f0be6a] text-[11px] tracking-[0.4em] uppercase">Est. 1991 · The Legacy Today</span>
+          </div>
+          <h2 className="font-poppins text-4xl md:text-5xl lg:text-6xl font-extrabold text-white leading-[1.02]">
+            Three Decades of{' '}
+            <span className="font-fraunces italic font-medium bg-gradient-to-r from-[#f7d99a] via-[#e6a84f] to-[#c8902e] bg-clip-text text-transparent">Trust</span>
+          </h2>
+          <p className="font-inter text-white/55 text-base lg:text-lg leading-relaxed mt-5 max-w-xl">
+            Measured not in years alone, but in the trust earned along the way — every figure below took 35 years to become true.
+          </p>
         </motion.div>
 
-        <div className="border-y border-white/[0.08]">
-          {LEGACY_FIGURES.map((f, i) => (
-            <motion.div key={i}
-              initial={{ opacity: 0, y: 34 }} animate={inView ? { opacity: 1, y: 0 } : {}}
-              transition={{ delay: 0.3 + i * 0.14, duration: 0.85, ease: [0.22, 1, 0.36, 1] }}
-              className={`group flex items-center justify-between gap-6 py-6 lg:py-9 ${i < LEGACY_FIGURES.length - 1 ? 'border-b border-white/[0.06]' : ''}`}>
-              <span className="font-poppins font-extrabold leading-none bg-gradient-to-b from-white to-white/55 bg-clip-text text-transparent group-hover:from-[#f7d99a] group-hover:to-[#c8902e] transition-all duration-500"
-                style={{ fontSize: 'clamp(3.5rem, 12vw, 9rem)' }}>
-                {f.v}
-              </span>
-              <span className="font-inter text-white/40 text-xs sm:text-base lg:text-xl tracking-[0.18em] uppercase text-right">{f.u}</span>
-            </motion.div>
-          ))}
+        {/* Bento — feature "35 Years" + 2×2 metric cards */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-5">
+          {/* Feature panel */}
+          <motion.div
+            initial={{ opacity: 0, y: 34 }} animate={inView ? { opacity: 1, y: 0 } : {}}
+            transition={{ delay: 0.2, duration: 0.85, ease }}
+            className="lg:col-span-5 group relative overflow-hidden rounded-3xl border border-[#e6a84f]/25 bg-gradient-to-br from-[#0c1622]/85 to-[#04090f]/85 backdrop-blur-2xl p-7 sm:p-9 lg:p-10 flex flex-col justify-between min-h-[300px] lg:min-h-[460px]">
+            <img src="/images/dsc/team-group-1.jpg" alt="" aria-hidden
+              className="absolute inset-0 w-full h-full object-cover opacity-[0.14] group-hover:opacity-[0.24] transition-opacity duration-[1200ms]" />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#04090f] via-[#04090f]/55 to-transparent" />
+            <div className="absolute -top-12 -right-12 w-52 h-52 bg-[radial-gradient(circle,rgba(230,168,79,0.22),transparent_65%)] pointer-events-none" />
+            <div className="relative flex items-center justify-between">
+              <span className="font-inter text-[#f0be6a] text-[11px] tracking-[0.3em] uppercase">Since 1991</span>
+              <span className="w-11 h-11 rounded-xl bg-[#e6a84f]/[0.12] border border-[#e6a84f]/30 text-[#e6a84f] flex items-center justify-center"><TrophyIcon /></span>
+            </div>
+            <div className="relative">
+              <p className="font-poppins font-extrabold text-white leading-[0.85] tabular-nums" style={{ fontSize: 'clamp(4.5rem, 11vw, 8rem)' }}>{years}</p>
+              <p className="font-fraunces italic text-2xl lg:text-3xl text-[#e6a84f] mt-1">years of excellence</p>
+              <p className="font-inter text-white/55 text-sm mt-4 max-w-xs leading-relaxed">A legacy built on discipline, trust, and an uncompromising standard — set in 1991, upheld every day since.</p>
+            </div>
+          </motion.div>
+
+          {/* 2×2 metric grid */}
+          <div className="lg:col-span-7 grid grid-cols-2 gap-4 lg:gap-5">
+            {cards.map((stat, i) => (
+              <LegacyStatCard key={stat.label} stat={stat} index={i} active={inView} />
+            ))}
+          </div>
         </div>
       </div>
     </div>
@@ -585,12 +592,14 @@ function LegacyFinale() {
 }
 
 /* — Editorial image tile — */
-function EditorialImg({ src, label, className = '' }: { src: string; label: string; className?: string }) {
+function EditorialImg({ src, label, className = '', natural = false }: { src: string; label: string; className?: string; natural?: boolean }) {
   return (
     <ScrollReveal className={`group relative overflow-hidden rounded-2xl ${className}`}>
       <img src={src} alt={label}
-        className="absolute inset-0 w-full h-full object-cover transition-transform duration-[1300ms] ease-out group-hover:scale-105" />
-      <div className="absolute inset-0 bg-gradient-to-t from-[#04090f]/80 via-transparent to-transparent" />
+        className={natural
+          ? 'block w-full h-auto transition-transform duration-[1300ms] ease-out group-hover:scale-[1.02]'
+          : 'absolute inset-0 w-full h-full object-cover transition-transform duration-[1300ms] ease-out group-hover:scale-105'} />
+      <div className="absolute inset-0 bg-gradient-to-t from-[#04090f]/80 via-transparent to-transparent pointer-events-none" />
       <div className="absolute bottom-5 left-5 flex items-center gap-2.5">
         <span className="w-6 h-px bg-[#e6a84f] transition-all duration-500 group-hover:w-10" />
         <span className="font-inter text-[#e6a84f] text-[10px] tracking-[0.3em] uppercase">{label}</span>
@@ -616,7 +625,7 @@ function WorkforceExcellence() {
 
         {/* Asymmetric magazine grid */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-4 lg:gap-5">
-          <EditorialImg src="/images/dsc/director-office.jpg" label="Leadership"
+          <EditorialImg src="/images/dsc/female-guards-salute.jpg" label="Our People"
             className="md:col-span-7 aspect-[4/3] md:aspect-[16/12]" />
           <EditorialImg src="/images/dsc/guard-lineup-1.jpg" label="Discipline"
             className="md:col-span-5 aspect-[4/3] md:aspect-[16/12]" />
@@ -625,8 +634,8 @@ function WorkforceExcellence() {
           <EditorialImg src="/images/dsc/formation-aerial.jpg" label="Scale"
             className="md:col-span-7 aspect-[4/3] md:aspect-auto" />
         </div>
-        <EditorialImg src="/images/dsc/team-group-2.jpg" label="The Workforce"
-          className="mt-4 lg:mt-5 aspect-[16/10] md:aspect-[21/7]" />
+        <EditorialImg src="/images/dsc/guard-lineup-3.jpg" label="The Workforce"
+          natural className="mt-4 lg:mt-5" />
       </div>
     </div>
   );
@@ -657,20 +666,30 @@ function DisciplineInMotion() {
           className="absolute inset-0 w-full h-full object-cover will-change-transform" />
         <motion.img style={{ opacity: o3, scale: s3 }} src="/images/dsc/guard-ceremonial.jpg" alt=""
           className="absolute inset-0 w-full h-full object-cover will-change-transform" />
-        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(4,9,15,0.55)_0%,rgba(4,9,15,0.2)_45%,rgba(4,9,15,0.8)_100%)]" />
+        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(4,9,15,0.62)_0%,rgba(4,9,15,0.28)_45%,rgba(4,9,15,0.85)_100%)]" />
+        {/* Center scrim — lifts the text off the image for legibility */}
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_62%_46%_at_50%_50%,rgba(4,9,15,0.6),transparent_72%)]" />
 
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-6 pointer-events-none">
-          <p className="font-inter text-[#e6a84f] text-[11px] tracking-[0.55em] uppercase mb-6">Discipline In Motion</p>
-          <div className="relative h-24 w-full max-w-3xl">
+          {/* Eyebrow — flanked by gold rules */}
+          <div className="flex items-center gap-4 mb-8 sm:mb-10">
+            <span className="h-px w-10 sm:w-16 bg-gradient-to-r from-transparent to-[#e6a84f]/70" />
+            <p className="font-inter text-[#f0be6a] text-[10px] sm:text-[11px] font-semibold tracking-[0.45em] uppercase whitespace-nowrap [text-shadow:0_2px_14px_rgba(0,0,0,0.85)]">Discipline in Motion</p>
+            <span className="h-px w-10 sm:w-16 bg-gradient-to-l from-transparent to-[#e6a84f]/70" />
+          </div>
+
+          {/* Captions — editorial two-tone: Poppins white + Fraunces gold serif */}
+          <div className="relative h-32 sm:h-36 md:h-44 w-full max-w-4xl">
             {[
-              { o: cap1, t: 'Every step, in formation.' },
-              { o: cap2, t: 'Every guard, in line.' },
-              { o: cap3, t: 'Every duty, with honour.' },
+              { o: cap1, a: 'Every step,', b: 'in formation.' },
+              { o: cap2, a: 'Every guard,', b: 'in line.' },
+              { o: cap3, a: 'Every duty,', b: 'with honour.' },
             ].map((c, i) => (
-              <motion.p key={i} style={{ opacity: c.o }}
-                className="absolute inset-0 flex items-center justify-center font-poppins text-2xl md:text-4xl lg:text-5xl font-bold text-white">
-                {c.t}
-              </motion.p>
+              <motion.div key={i} style={{ opacity: c.o }}
+                className="absolute inset-0 flex flex-col items-center justify-center gap-1.5 sm:gap-2">
+                <span className="font-poppins font-bold text-white leading-[1.04] tracking-[-0.01em] [text-shadow:0_3px_26px_rgba(0,0,0,0.7)]" style={{ fontSize: 'clamp(1.9rem, 6vw, 4rem)' }}>{c.a}</span>
+                <span className="font-fraunces italic font-medium leading-[1.04] bg-gradient-to-r from-[#f7d99a] via-[#f0be6a] to-[#e6a84f] bg-clip-text text-transparent drop-shadow-[0_3px_18px_rgba(0,0,0,0.55)]" style={{ fontSize: 'clamp(1.9rem, 6vw, 4rem)' }}>{c.b}</span>
+              </motion.div>
             ))}
           </div>
         </div>
@@ -734,7 +753,7 @@ const FOUNDER_STORY = [
   {
     year: '1991',
     headline: 'The Vision',
-    body: 'With a single commitment to discipline and trust, Rajasekar founded Sai Saktheeswari Staffing Services in Cuddalore — driven by a belief that South India deserved a workforce partner it could truly rely on.',
+    body: 'Founded in Cuddalore on a single commitment to discipline and trust — driven by a belief that South India deserved a workforce partner it could truly rely on.',
   },
   {
     year: '2000',
@@ -744,7 +763,7 @@ const FOUNDER_STORY = [
   {
     year: '2010',
     headline: 'The Partnership Era',
-    body: 'Trusted by manufacturers, hospitals, and educational institutions alike. Rajasekar personally built each relationship — not through proposals, but through performance.',
+    body: 'Trusted by manufacturers, hospitals, and educational institutions alike. Each relationship was built personally — not through proposals, but through performance.',
   },
   {
     year: '2025',
@@ -753,53 +772,42 @@ const FOUNDER_STORY = [
   },
 ];
 
-function FounderTimelineEntry({ entry }: { entry: typeof FOUNDER_STORY[0] }) {
+function JourneyMilestone({ entry, index }: { entry: typeof FOUNDER_STORY[0]; index: number }) {
   const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { once: true, margin: '-15%' });
+  const inView = useInView(ref, { once: true, margin: '-18%' });
+  const isLeft = index % 2 === 0;
   return (
-    <div ref={ref} className="relative flex gap-10 sm:gap-16 pb-20 last:pb-0">
-      {/* Node */}
-      <div className="flex-shrink-0 flex items-start justify-center" style={{ width: '1rem' }}>
-        <motion.div
-          initial={{ scale: 0, opacity: 0 }} animate={inView ? { scale: 1, opacity: 1 } : {}}
-          transition={{ delay: 0.1, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-          className="w-2.5 h-2.5 rounded-full bg-[#e6a84f] shadow-[0_0_16px_rgba(230,168,79,0.8)] relative z-10 mt-5 flex-shrink-0"
-        />
+    <div ref={ref} className="relative pb-14 lg:pb-20 last:pb-0 pl-14 lg:pl-0 lg:grid lg:grid-cols-2">
+      {/* Glowing pulse node on the rail */}
+      <div className="absolute left-3 lg:left-1/2 lg:-translate-x-1/2 top-6 z-20">
+        <motion.span
+          initial={{ scale: 0 }} animate={inView ? { scale: 1 } : {}}
+          transition={{ duration: 0.55, ease }}
+          className="relative flex h-4 w-4 items-center justify-center">
+          <span className="absolute inline-flex h-full w-full rounded-full bg-[#e6a84f]/40 animate-ping" />
+          <span className="relative h-3 w-3 rounded-full bg-[#e6a84f] ring-4 ring-[#04090f] shadow-[0_0_18px_rgba(230,168,79,0.85)]" />
+        </motion.span>
       </div>
-      {/* Content */}
-      <div>
-        <motion.p
-          initial={{ opacity: 0, y: 18 }} animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ delay: 0.15, duration: 0.85, ease: [0.22, 1, 0.36, 1] }}
-          className="font-poppins font-extrabold text-[#e6a84f]/75 leading-none mb-2.5"
-          style={{ fontSize: 'clamp(2rem, 6.5vw, 4rem)' }}>
-          {entry.year}
-        </motion.p>
-        <motion.p
-          initial={{ opacity: 0, y: 10 }} animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ delay: 0.26, duration: 0.8 }}
-          className="font-poppins font-semibold text-white text-xl lg:text-2xl mb-4 leading-snug">
-          {entry.headline}
-        </motion.p>
-        <motion.p
-          initial={{ opacity: 0, y: 10 }} animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ delay: 0.37, duration: 0.8 }}
-          className="font-inter text-white/65 text-base lg:text-lg leading-[1.85] max-w-[500px]">
-          {entry.body}
-        </motion.p>
-      </div>
+
+      {/* Glass milestone panel — alternates sides on desktop */}
+      <motion.div
+        initial={{ opacity: 0, y: 40 }} animate={inView ? { opacity: 1, y: 0 } : {}}
+        transition={{ duration: 0.8, ease }}
+        className={isLeft ? 'lg:col-start-1 lg:pr-14' : 'lg:col-start-2 lg:pl-14'}>
+        <div className={`group relative overflow-hidden rounded-3xl bg-white/[0.03] backdrop-blur-xl border border-white/[0.08] hover:border-[#e6a84f]/40 p-6 lg:p-8 transition-all duration-500 hover:-translate-y-1.5 hover:shadow-[0_28px_64px_rgba(0,0,0,0.5)] ${isLeft ? 'lg:text-right' : ''}`}>
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(230,168,79,0.1),transparent_60%)] opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+          <div className="relative">
+            <p className="font-poppins font-extrabold leading-none mb-3 bg-gradient-to-br from-[#f7d99a] via-[#e6a84f] to-[#c8902e] bg-clip-text text-transparent tabular-nums" style={{ fontSize: 'clamp(2.6rem, 7vw, 4.5rem)' }}>{entry.year}</p>
+            <p className="font-fraunces italic font-medium text-white text-xl lg:text-2xl mb-3">{entry.headline}</p>
+            <p className="font-inter text-white/60 text-sm lg:text-[15px] leading-[1.8]">{entry.body}</p>
+          </div>
+        </div>
+      </motion.div>
     </div>
   );
 }
 
 function FounderSection() {
-  /* Portrait */
-  const portraitRef = useRef<HTMLDivElement>(null);
-  const portraitInView = useInView(portraitRef, { once: true, margin: '-8%' });
-  const { scrollYProgress: portraitScroll } = useScroll({ target: portraitRef, offset: ['start end', 'end start'] });
-  const imgParallaxY = useTransform(portraitScroll, [0, 1], ['-6%', '6%']);
-  const imgScaleP = useTransform(portraitScroll, [0, 1], [1.1, 1.0]);
-
   /* Journey timeline */
   const timelineRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress: tlScroll } = useScroll({ target: timelineRef, offset: ['start end', 'end center'] });
@@ -808,91 +816,38 @@ function FounderSection() {
   return (
     <section className="relative bg-[#04090f]">
 
-      {/* ── PORTRAIT EDITORIAL — single viewport ── */}
-      <div ref={portraitRef} className="relative min-h-screen overflow-hidden flex items-center">
-        {/* Founder image — parallax, right-weighted */}
-        <motion.div style={{ scale: imgScaleP, y: imgParallaxY }} className="absolute inset-0 will-change-transform">
-          <motion.img
-            src="/images/founder/rajasekar-office.jpg"
-            alt="Rajasekar — Founder & Managing Director, Sai Saktheeswari Staffing Services"
-            className="absolute inset-0 w-full h-full object-cover object-center"
-            initial={{ opacity: 0, filter: 'blur(22px)' }}
-            animate={portraitInView ? { opacity: 1, filter: 'blur(0px)' } : {}}
-            transition={{ duration: 1.9, ease: [0.22, 1, 0.36, 1] }}
-          />
-        </motion.div>
-        {/* Directional scrim — dark left (text), lighter right (image) */}
-        <div className="absolute inset-0 bg-[linear-gradient(100deg,rgba(4,9,15,0.97)_0%,rgba(4,9,15,0.88)_36%,rgba(4,9,15,0.46)_62%,rgba(4,9,15,0.04)_100%)]" />
-        <div className="absolute inset-0 bg-[linear-gradient(180deg,#04090f_0%,transparent_12%,transparent_88%,#04090f_100%)]" />
-        <div className="absolute right-0 top-1/2 -translate-y-1/2 w-[45%] h-[60%] bg-[#e6a84f]/[0.05] blur-[120px] pointer-events-none" />
-
-        <div className="relative z-10 max-w-7xl mx-auto px-7 sm:px-12 lg:px-20 py-24 w-full">
-          <div className="max-w-[480px]">
-            <motion.p
-              initial={{ opacity: 0, y: 12 }} animate={portraitInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.9 }}
-              className="font-inter text-[#e6a84f] text-[11px] tracking-[0.55em] uppercase mb-7">
-              A Vision That Built A Legacy
-            </motion.p>
-
-            <div style={{ fontSize: 'clamp(3.8rem, 9.5vw, 7rem)' }} className="mb-5">
-              <RevealHeading inView={portraitInView} text="Rajasekar"
-                className="font-poppins font-extrabold text-white leading-[0.94]" />
-            </div>
-
-            <motion.div
-              initial={{ scaleX: 0 }} animate={portraitInView ? { scaleX: 1 } : {}}
-              transition={{ delay: 0.6, duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
-              className="h-px w-24 bg-gradient-to-r from-[#e6a84f]/60 to-transparent mb-7"
-              style={{ transformOrigin: 'left' }}
-            />
-
-            <motion.p
-              initial={{ opacity: 0, y: 12 }} animate={portraitInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ delay: 0.38, duration: 0.9 }}
-              className="font-inter text-white/55 text-base lg:text-[1.05rem] leading-[1.82] mb-7 max-w-[400px]">
-              One man. One commitment. 35 years building the most trusted staffing institution in South India — every worker trained before deployment, every single time.
-            </motion.p>
-
-            <motion.div
-              initial={{ opacity: 0, x: -10 }} animate={portraitInView ? { opacity: 1, x: 0 } : {}}
-              transition={{ delay: 0.52, duration: 0.9 }}
-              className="border-l-2 border-[#e6a84f]/35 pl-5 mb-8">
-              <p className="font-poppins text-[#e6a84f]/75 text-base lg:text-lg leading-[1.65] italic">
-                "Every worker we deploy carries our reputation."
-              </p>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 10 }} animate={portraitInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ delay: 0.65, duration: 0.8 }}
-              className="space-y-1.5">
-              <p className="font-inter text-white/52 text-sm tracking-[0.28em] uppercase">Founder & Managing Director</p>
-              <p className="font-inter text-[#e6a84f]/35 text-[11px] tracking-[0.38em] uppercase">Since 1991</p>
-            </motion.div>
-          </div>
-        </div>
-      </div>
-
       {/* ── JOURNEY TIMELINE ── */}
-      <div ref={timelineRef} className="relative py-24 lg:py-36 bg-[#04090f]">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_40%_at_20%_50%,rgba(13,79,100,0.06),transparent)]" />
-        <div className="relative z-10 max-w-5xl mx-auto px-6 sm:px-12">
-          <FadeIn className="mb-16 lg:mb-24">
-            <p className="font-inter text-[#e6a84f] text-[11px] tracking-[0.55em] uppercase mb-5">The Journey</p>
-            <h2 className="font-poppins font-extrabold text-white leading-[1.06]"
-              style={{ fontSize: 'clamp(2.2rem, 5.5vw, 4rem)' }}>
-              How a legacy is built.<br />
-              <span className="text-white/25">Year by year.</span>
+      <div ref={timelineRef} className="relative py-24 lg:py-36 bg-[#04090f] overflow-hidden">
+        {/* Ambient cinematic lighting */}
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_40%_at_50%_0%,rgba(230,168,79,0.06),transparent)] pointer-events-none" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_50%_50%_at_85%_75%,rgba(13,79,100,0.08),transparent)] pointer-events-none" />
+        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#e6a84f]/20 to-transparent" />
+
+        <div className="relative z-10 max-w-6xl mx-auto px-6 sm:px-12">
+          {/* Centered header */}
+          <FadeIn className="text-center mb-16 lg:mb-24 max-w-3xl mx-auto">
+            <div className="inline-flex items-center gap-2.5 mb-5">
+              <span className="w-8 h-px bg-[#e6a84f]" />
+              <span className="font-inter text-[#f0be6a] text-[11px] font-semibold tracking-[0.4em] uppercase">The Journey</span>
+              <span className="w-8 h-px bg-[#e6a84f]" />
+            </div>
+            <h2 className="font-poppins font-extrabold text-white leading-[1.05]" style={{ fontSize: 'clamp(2.2rem, 5.5vw, 4rem)' }}>
+              How a legacy is built.{' '}
+              <span className="font-fraunces italic font-medium bg-gradient-to-r from-[#f7d99a] to-[#c8902e] bg-clip-text text-transparent">Year by year.</span>
             </h2>
           </FadeIn>
-          <div className="relative pl-7 sm:pl-10">
+
+          {/* Alternating timeline */}
+          <div className="relative">
+            {/* Static rail track */}
+            <div className="absolute left-[19px] lg:left-1/2 lg:-translate-x-1/2 top-1 bottom-0 w-px bg-white/[0.06]" />
+            {/* Gold rail — drawn on scroll */}
             <motion.div
               style={{ scaleY: lineScaleY, transformOrigin: 'top' }}
-              className="absolute left-[0.55rem] sm:left-[0.8rem] top-5 bottom-0 w-px bg-gradient-to-b from-[#e6a84f]/55 via-[#e6a84f]/18 to-transparent"
+              className="absolute left-[19px] lg:left-1/2 lg:-translate-x-1/2 top-1 bottom-0 w-px bg-gradient-to-b from-[#e6a84f]/60 via-[#e6a84f]/25 to-transparent"
             />
             {FOUNDER_STORY.map((entry, i) => (
-              <FounderTimelineEntry key={i} entry={entry} />
+              <JourneyMilestone key={i} entry={entry} index={i} />
             ))}
           </div>
         </div>
@@ -903,35 +858,86 @@ function FounderSection() {
 }
 
 /* ─── SERVICES ─── */
+/* ─── WHAT WE DO — premium editorial bento ─── */
+const svcStroke = { fill: 'none', stroke: 'currentColor', strokeWidth: 1.5, strokeLinecap: 'round' as const, strokeLinejoin: 'round' as const };
+function IconShield() { return <svg width="22" height="22" viewBox="0 0 24 24" {...svcStroke}><path d="M12 2 4 5v6c0 5 3.4 8.5 8 10 4.6-1.5 8-5 8-10V5l-8-3Z" /><path d="m9 12 2 2 4-4" /></svg>; }
+function IconWorkforce() { return <svg width="22" height="22" viewBox="0 0 24 24" {...svcStroke}><circle cx="9" cy="8" r="3" /><path d="M2.5 20a6.5 6.5 0 0 1 13 0M16 5.4a3 3 0 0 1 0 5.2M21.5 20a6.5 6.5 0 0 0-5-6.3" /></svg>; }
+function IconContract() { return <svg width="22" height="22" viewBox="0 0 24 24" {...svcStroke}><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><path d="M14 2v6h6M8 13h8M8 17h5" /></svg>; }
+function IconCompliance() { return <svg width="22" height="22" viewBox="0 0 24 24" {...svcStroke}><path d="M12 3v18M5 7h14M7 7l-3 6a3 3 0 0 0 6 0L7 7Zm10 0-3 6a3 3 0 0 0 6 0l-3-6Z" /></svg>; }
+
+const SERVICE_VISUALS: Record<string, { img: string; Icon: () => React.ReactElement }> = {
+  security: { img: '/images/dsc/campus-deployment-2.jpg', Icon: IconShield },
+  labour: { img: '/images/dsc/team-group-1.jpg', Icon: IconWorkforce },
+  contract: { img: '/images/dsc/supervisors-duo.jpg', Icon: IconContract },
+  compliance: { img: '/images/dsc/campus-patrol-1.jpg', Icon: IconCompliance },
+};
+
+function ServiceCard({ service, index }: { service: typeof SERVICES[0]; index: number }) {
+  const v = SERVICE_VISUALS[service.id];
+  const span = index === 0 || index === 3 ? 'lg:col-span-7' : 'lg:col-span-5';
+  return (
+    <motion.a href="/services"
+      initial={{ opacity: 0, y: 34 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: '-60px' }}
+      transition={{ duration: 0.7, delay: (index % 2) * 0.1, ease }}
+      className={`${span} group relative overflow-hidden rounded-3xl ring-1 ring-white/[0.08] hover:ring-[#e6a84f]/40 min-h-[300px] lg:min-h-[360px] flex transition-all duration-500 hover:-translate-y-1.5 hover:shadow-[0_30px_70px_rgba(0,0,0,0.55)]`}>
+      <img src={v.img} alt={service.title}
+        className="absolute inset-0 w-full h-full object-cover brightness-[0.5] group-hover:brightness-[0.42] group-hover:scale-[1.06] transition-all duration-[900ms] ease-out" />
+      <div className="absolute inset-0 bg-gradient-to-t from-[#04090f] via-[#04090f]/55 to-[#04090f]/10" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_15%_100%,rgba(230,168,79,0.16),transparent_55%)] opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+      <div className="relative z-10 mt-auto p-6 lg:p-8 w-full">
+        <div className="flex items-start justify-between mb-4">
+          <div className="w-12 h-12 rounded-2xl bg-[#04090f]/55 backdrop-blur-md border border-[#e6a84f]/30 text-[#e6a84f] flex items-center justify-center group-hover:scale-110 group-hover:border-[#e6a84f]/55 transition-all duration-300">
+            <v.Icon />
+          </div>
+          <span className="font-fraunces italic text-white/25 text-3xl leading-none">0{index + 1}</span>
+        </div>
+        <h3 className="font-poppins font-bold text-white text-xl lg:text-2xl mb-2 tracking-[-0.01em]">{service.title}</h3>
+        <p className="font-inter text-white/60 text-sm leading-relaxed mb-5 max-w-md line-clamp-2">{service.desc}</p>
+        <span className="inline-flex items-center gap-2 font-poppins font-semibold text-[#e6a84f] text-sm">
+          Explore Service
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" className="transition-transform duration-300 group-hover:translate-x-1">
+            <path d="M2 7h9.5M7.5 3l4 4-4 4" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </span>
+      </div>
+    </motion.a>
+  );
+}
+
 function ServicesSection() {
   return (
-    <section className="py-24 bg-[#f8f9fa]">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <FadeIn className="text-center mb-16">
-          <p className="font-inter text-[#e6a84f] font-semibold text-sm uppercase tracking-widest mb-3">What We Do</p>
-          <h2 className="font-poppins text-4xl font-bold text-[#0d4f64] mb-4">Complete Workforce Solutions</h2>
-          <p className="font-inter text-[#6b7c8d] max-w-2xl mx-auto leading-relaxed">
-            From security personnel to statutory compliance — one trusted partner for all your workforce needs in Tamil Nadu.
-          </p>
-        </FadeIn>
+    <section id="services" className="relative bg-[#050d1a] py-24 lg:py-32 overflow-hidden">
+      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#e6a84f]/20 to-transparent" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_0%,rgba(230,168,79,0.06),transparent)] pointer-events-none" />
 
-        <StaggerChildren className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6" stagger={0.1}>
-          {SERVICES.map((s) => (
-            <StaggerItem key={s.id}>
-              <motion.div whileHover={{ y: -6 }} transition={{ duration: 0.2 }}
-                className="bg-white rounded-2xl p-8 border border-gray-100 shadow-sm hover:shadow-xl transition-shadow group h-full">
-                <div className="w-14 h-14 bg-[#e8f4f8] rounded-xl flex items-center justify-center text-2xl mb-6 group-hover:bg-[#0d4f64] transition-colors">
-                  <span className="group-hover:brightness-200">{s.icon}</span>
-                </div>
-                <h3 className="font-poppins font-bold text-lg text-[#1a2a3a] mb-3">{s.title}</h3>
-                <p className="font-inter text-[#6b7c8d] text-sm leading-relaxed mb-6">{s.desc}</p>
-                <a href={s.href} className="font-poppins text-[#0d4f64] font-semibold text-sm hover:text-[#e6a84f] transition-colors flex items-center gap-1">
-                  Learn More →
-                </a>
-              </motion.div>
-            </StaggerItem>
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Editorial split header */}
+        <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-12 lg:mb-16">
+          <FadeIn className="max-w-2xl">
+            <div className="inline-flex items-center gap-2.5 mb-5">
+              <span className="w-8 h-px bg-[#e6a84f]" />
+              <span className="font-inter text-[#f0be6a] text-[11px] font-semibold tracking-[0.3em] uppercase">What We Do</span>
+            </div>
+            <h2 className="font-poppins text-4xl md:text-5xl lg:text-6xl font-extrabold text-white leading-[1.04]">
+              Complete Workforce{' '}
+              <span className="font-fraunces italic font-medium bg-gradient-to-r from-[#f7d99a] to-[#c8902e] bg-clip-text text-transparent">Solutions</span>
+            </h2>
+          </FadeIn>
+          <FadeIn className="lg:max-w-md">
+            <p className="font-inter text-white/55 text-base lg:text-lg leading-relaxed lg:text-right">
+              From security personnel to statutory compliance — one trusted partner for every workforce need across Tamil Nadu since 1991.
+            </p>
+          </FadeIn>
+        </div>
+
+        {/* Asymmetric bento */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-5">
+          {SERVICES.map((s, i) => (
+            <ServiceCard key={s.id} service={s} index={i} />
           ))}
-        </StaggerChildren>
+        </div>
       </div>
     </section>
   );
@@ -965,7 +971,7 @@ const PROCESS_STEPS = [
   },
   {
     num: '03', key: 'SUPPORT', eyebrow: 'Training Ecosystem',
-    desc: 'Our certified training programme covers security protocols, emergency response, professional grooming, and communication — personally overseen by Founder Rajasekar.',
+    desc: 'Our certified training programme covers security protocols, emergency response, professional grooming, and communication — overseen by our senior training supervisors.',
     points: ['Security & safety protocols', 'Emergency response drills', 'Professional grooming standards', 'Communication skills'],
     img: '/images/home/guards-march.jpg',
     imgAlt: 'Sai Saktheeswari guards marching in formation — training excellence',
@@ -1072,30 +1078,44 @@ function ProcessSection() {
 
       {/* ── ENTERPRISE HEADER ── */}
       <div className="relative py-24 lg:py-36 text-center overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_50%_at_50%_100%,rgba(230,168,79,0.07),transparent)] pointer-events-none" />
+        {/* Workforce-in-formation background — real company photo */}
+        <div className="absolute inset-0 pointer-events-none select-none" aria-hidden="true">
+          <img
+            src="/images/dsc/guard-lineup-3.jpg"
+            alt=""
+            className="w-full h-full object-cover object-center"
+          />
+          {/* Layered scrim — guarantees 4.5:1 text contrast over the photo */}
+          <div className="absolute inset-0 bg-[#050d1a]/[0.88]" />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#050d1a] via-[#050d1a]/72 to-[#050d1a]" />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_55%_at_50%_45%,transparent,rgba(5,13,26,0.6))]" />
+        </div>
+        {/* Warm gold glow from below */}
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_50%_at_50%_100%,rgba(230,168,79,0.12),transparent)] pointer-events-none" />
+
         <FadeIn className="relative z-10 mb-14 px-4">
-          <div className="inline-flex items-center gap-2 bg-[#e6a84f]/8 border border-[#e6a84f]/18 rounded-full px-4 py-1.5 mb-7">
+          <div className="inline-flex items-center gap-2 bg-[#e6a84f]/14 border border-[#e6a84f]/35 rounded-full px-4 py-1.5 mb-7 backdrop-blur-sm">
             <div className="w-1.5 h-1.5 rounded-full bg-[#e6a84f] animate-pulse" />
-            <span className="font-inter text-[#e6a84f] text-[10px] font-bold tracking-[0.3em] uppercase">35 Years · Proven Methodology</span>
+            <span className="font-inter text-[#f0be6a] text-[10px] font-bold tracking-[0.3em] uppercase">35 Years · Proven Methodology</span>
           </div>
-          <h2 className="font-poppins text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-extrabold text-white leading-[0.92] mb-6">
+          <h2 className="font-poppins text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-extrabold text-white leading-[0.92] mb-6 drop-shadow-[0_2px_24px_rgba(0,0,0,0.7)]">
             The 4<span className="text-[#e6a84f]">S</span><br />
             <span className="text-white">Workforce</span><br />
-            <span className="text-white/30">System</span>
+            <span className="text-white/60">System</span>
           </h2>
-          <p className="font-inter text-white/38 text-base lg:text-lg max-w-xl mx-auto leading-relaxed">
+          <p className="font-inter text-white/80 text-base lg:text-lg max-w-xl mx-auto leading-relaxed drop-shadow-[0_1px_14px_rgba(0,0,0,0.6)]">
             Every worker we deploy follows our proprietary 4S journey — from talent sourcing to long-term performance assurance.
           </p>
         </FadeIn>
 
         {/* Enterprise metrics strip */}
         <div className="relative z-10 max-w-5xl mx-auto px-4">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-0 lg:bg-white/[0.04] lg:border lg:border-white/8 lg:rounded-2xl lg:overflow-hidden">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-0 lg:bg-[#0a1422]/75 lg:backdrop-blur-xl lg:border lg:border-[#e6a84f]/18 lg:rounded-2xl lg:overflow-hidden lg:shadow-[0_24px_70px_rgba(0,0,0,0.55)]">
             {ENT_METRICS.map((m, i) => (
               <ScrollReveal key={i}
-                className="bg-white/[0.04] border border-white/8 rounded-2xl lg:rounded-none lg:bg-transparent lg:border-0 lg:border-r last:lg:border-r-0 lg:border-white/8 p-6 lg:p-8 flex flex-col items-center gap-2">
-                <span className="font-poppins text-3xl lg:text-4xl xl:text-5xl font-extrabold text-[#e6a84f]">{m.display}</span>
-                <span className="font-inter text-white/32 text-[9px] lg:text-[10px] uppercase tracking-[0.2em] text-center">{m.label}</span>
+                className="bg-[#0a1422]/75 backdrop-blur-xl border border-[#e6a84f]/18 rounded-2xl lg:rounded-none lg:bg-transparent lg:border-0 lg:border-r last:lg:border-r-0 lg:border-white/10 p-6 lg:p-8 flex flex-col items-center gap-2">
+                <span className="font-poppins text-3xl lg:text-4xl xl:text-5xl font-extrabold text-[#e6a84f] drop-shadow-[0_2px_14px_rgba(230,168,79,0.3)]">{m.display}</span>
+                <span className="font-inter text-white/72 text-[9px] lg:text-[10px] uppercase tracking-[0.2em] text-center font-medium">{m.label}</span>
               </ScrollReveal>
             ))}
           </div>
@@ -1145,7 +1165,7 @@ function ProcessSection() {
 function TrainingSection() {
   const photos = [
     { src: '/images/training-3.jpeg', caption: 'Weekly briefing at Cuddalore centre' },
-    { src: '/images/founder-training.jpeg', caption: 'Rajasekaran conducting personal training' },
+    { src: '/images/training-7.jpeg', caption: 'On-site training drill' },
     { src: '/images/training-11.jpeg', caption: 'Large-scale team session' },
     { src: '/images/deployment.jpeg', caption: 'Guards deployed at client site' },
   ];
@@ -1179,7 +1199,7 @@ function TrainingSection() {
             <h2 className="font-poppins text-4xl font-bold text-[#0d4f64] mb-5">Every Worker Trained Before Deployment</h2>
             <p className="font-inter text-[#6b7c8d] leading-relaxed mb-10">
               At Sai Saktheeswari, we supply <strong className="text-[#1a2a3a]">professionally trained, discipline-first workforce</strong>.
-              Our founder personally oversees training at our Cuddalore centre — a standard maintained for 35 years.
+              Our senior supervisors personally oversee training at our Cuddalore centre — a standard maintained for 35 years.
             </p>
             <div className="space-y-5 mb-10">
               {points.map((p, i) => (
@@ -1259,13 +1279,13 @@ const INDUSTRIES_CINEMATIC = [
     n: '03', name: 'Education', headline: 'Guardians of every campus.',
     body: 'Professional campus protection for schools, colleges and institutions — keeping thousands of students, staff and visitors safe, every single day.',
     proof: ['Campus access control', 'Event security', 'Student safety patrols'],
-    img: '/images/dsc/campus-wide.jpg',
+    img: '/images/dsc/campus-deployment-2.jpg',
   },
   {
     n: '04', name: 'Industrial', headline: 'Vigilance through the night shift.',
     body: 'Large-scale industrial estates demand uninterrupted supervision. Our officers monitor perimeters, control access and patrol grounds without pause.',
     proof: ['Perimeter patrol', 'Night-shift monitoring', 'Access supervision'],
-    img: '/images/dsc/guards-patrol.jpg',
+    img: '/images/dsc/guard-lineup-3.jpg',
   },
   {
     n: '05', name: 'Corporate Offices', headline: 'The first impression of authority.',
@@ -1567,85 +1587,12 @@ function FAQSection() {
 }
 
 /* ─── FOOTER ─── */
-function Footer() {
-  return (
-    <footer className="bg-[#060f18] pt-16 pb-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-10 pb-12 border-b border-white/8">
-          <div>
-            <div className="flex items-center gap-3 mb-5">
-              <div className="w-12 h-12 rounded-full overflow-hidden ring-2 ring-[#e6a84f]/25">
-                <img src="/images/logo.jpeg" alt="Logo" className="w-full h-full object-cover" />
-              </div>
-              <div>
-                <p className="font-poppins font-bold text-white text-sm">Sai Saktheeswari</p>
-                <p className="font-inter text-[#e6a84f] text-xs">Staffing Services</p>
-              </div>
-            </div>
-            <p className="font-inter text-white/40 text-sm leading-relaxed mb-6">
-              {COMPANY.tagline}.<br />Established {COMPANY.established}.
-            </p>
-            <a href={`https://wa.me/${COMPANY.phone.whatsapp}`} target="_blank" rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 bg-green-600/90 hover:bg-green-600 text-white font-inter text-sm px-4 py-2.5 rounded-xl transition-all">
-              💬 WhatsApp Us
-            </a>
-          </div>
-          <div>
-            <h4 className="font-poppins font-bold text-white text-sm uppercase tracking-wide mb-5">Quick Links</h4>
-            <ul className="space-y-3">
-              {NAV_LINKS.map(l => (
-                <li key={l.href}><a href={l.href} className="font-inter text-white/45 hover:text-[#e6a84f] text-sm transition-colors">{l.label}</a></li>
-              ))}
-            </ul>
-          </div>
-          <div>
-            <h4 className="font-poppins font-bold text-white text-sm uppercase tracking-wide mb-5">Our Services</h4>
-            <ul className="space-y-3">
-              {SERVICES.map(s => (
-                <li key={s.id}><a href={s.href} className="font-inter text-white/45 hover:text-[#e6a84f] text-sm transition-colors">{s.title}</a></li>
-              ))}
-            </ul>
-          </div>
-          <div>
-            <h4 className="font-poppins font-bold text-white text-sm uppercase tracking-wide mb-5">Contact Us</h4>
-            <div className="space-y-4">
-              {[COMPANY.address.head, COMPANY.address.branch].map((a, i) => (
-                <div key={i}>
-                  <p className="font-poppins text-white/60 text-xs uppercase tracking-wide mb-1">{a.label}</p>
-                  <p className="font-inter text-white/40 text-xs leading-relaxed">{a.text}</p>
-                </div>
-              ))}
-              <div className="space-y-2 pt-2">
-                {COMPANY.phone.office.map(ph => (
-                  <a key={ph} href={`tel:${ph.replace(/\s/g, '')}`}
-                    className="flex items-center gap-2 font-inter text-white/40 hover:text-[#e6a84f] text-xs transition-colors">
-                    📞 {ph}
-                  </a>
-                ))}
-                <a href={`mailto:${COMPANY.email}`}
-                  className="flex items-center gap-2 font-inter text-white/40 hover:text-[#e6a84f] text-xs transition-colors">
-                  ✉️ {COMPANY.email}
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="pt-8 flex flex-col md:flex-row justify-between items-center gap-3">
-          <p className="font-inter text-white/25 text-xs">
-            © {new Date().getFullYear()} Sai Saktheeswari Staffing Services. Established 1991. All Rights Reserved.
-          </p>
-          <p className="font-inter text-white/20 text-xs">Cuddalore · Puducherry · Tamil Nadu</p>
-        </div>
-      </div>
-    </footer>
-  );
-}
+/* Footer extracted → components/layout/Footer.tsx (rendered in app/layout.tsx) */
 
 /* ─── PAGE ─── */
 export default function Home() {
   return (
     <div className="min-h-screen">
-      <Navbar />
       <Hero />
       <LegacyExperience />
       <FounderSection />
@@ -1678,80 +1625,6 @@ export default function Home() {
         ]} />
       </section>
 
-      <Footer />
-
-      {/* WhatsApp — Desktop Premium Glass CTA */}
-      <motion.a
-        initial={{ opacity: 0, y: 24 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 2.8, duration: 1, ease: [0.22, 1, 0.36, 1] }}
-        whileHover={{ y: -4, transition: { duration: 0.35, ease: [0.22, 1, 0.36, 1] } }}
-        href={`https://wa.me/${COMPANY.phone.whatsapp}?text=Hello, I am interested in your staffing services.`}
-        target="_blank" rel="noopener noreferrer"
-        className="fixed bottom-8 right-7 z-50 hidden lg:flex items-center gap-4
-          px-5 py-[14px] rounded-2xl
-          bg-[#060d14]/88 backdrop-blur-2xl
-          border border-[#e6a84f]/18 hover:border-[#e6a84f]/42
-          shadow-[0_8px_40px_rgba(0,0,0,0.55),0_1px_0_rgba(255,255,255,0.04)_inset]
-          hover:shadow-[0_14px_56px_rgba(0,0,0,0.65),0_0_32px_rgba(230,168,79,0.06),0_1px_0_rgba(255,255,255,0.06)_inset]
-          transition-all duration-500 ease-out group">
-        <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0
-          bg-[#e6a84f]/[0.09] border border-[#e6a84f]/18
-          group-hover:bg-[#e6a84f]/[0.16] group-hover:border-[#e6a84f]/35 group-hover:scale-105 group-hover:rotate-[6deg]
-          transition-all duration-400 ease-out">
-          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M12 2C6.48 2 2 6.48 2 12c0 1.85.5 3.58 1.38 5.06L2 22l5.07-1.33A9.96 9.96 0 0012 22c5.52 0 10-4.48 10-10S17.52 2 12 2z" fill="rgba(230,168,79,0.15)" stroke="rgba(230,168,79,0.6)" strokeWidth="1.2"/>
-            <path d="M17.47 14.38c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.16-.17.2-.35.22-.64.08-.3-.15-1.26-.46-2.4-1.48-.88-.79-1.48-1.76-1.65-2.06-.17-.3-.02-.46.13-.6.13-.14.3-.35.44-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.67-1.61-.92-2.21-.24-.58-.49-.5-.67-.51-.17-.01-.37-.01-.57-.01-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48 0 1.46 1.06 2.88 1.21 3.07.15.2 2.1 3.2 5.08 4.49.71.31 1.26.49 1.69.62.71.23 1.36.2 1.87.12.57-.09 1.76-.72 2.01-1.41.25-.69.25-1.29.17-1.41-.07-.12-.27-.2-.57-.35z" fill="white" fillOpacity="0.9"/>
-          </svg>
-        </div>
-        <div>
-          <p className="font-poppins font-semibold text-white text-[13px] leading-none mb-[5px] tracking-[-0.005em]">Speak With Our Team</p>
-          <p className="font-inter text-[#e6a84f]/42 text-[10px] tracking-[0.3em] uppercase">WhatsApp · Fast Response</p>
-        </div>
-      </motion.a>
-
-      {/* Mobile Sticky Contact Bar */}
-      <div className="fixed bottom-0 left-0 right-0 z-40 lg:hidden
-        bg-[#04090f]/94 backdrop-blur-2xl border-t border-white/[0.07]
-        shadow-[0_-4px_32px_rgba(0,0,0,0.5)] px-4 py-3">
-        <div className="flex items-center gap-2.5">
-          <a href={`tel:${COMPANY.phone.primary.replace(/\s/g, '')}`}
-            className="flex-none flex items-center justify-center gap-1.5 px-4 py-[10px] rounded-xl
-              bg-white/[0.05] border border-white/[0.09]
-              font-inter text-white/70 text-xs font-medium tracking-[0.01em]
-              transition-colors hover:bg-white/[0.09]">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" className="opacity-70">
-              <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
-            </svg>
-            Call
-          </a>
-          <a href={`https://wa.me/${COMPANY.phone.whatsapp}?text=Hello, I am interested in your staffing services.`}
-            target="_blank" rel="noopener noreferrer"
-            className="flex-1 flex items-center justify-center gap-2.5
-              py-[10px] rounded-xl
-              bg-gradient-to-r from-[#f0be6a] to-[#c8902e]
-              border border-[#e6a84f]/40
-              text-[#0a1a24] font-poppins font-bold text-[11.5px] tracking-[0.04em]
-              shadow-[0_2px_16px_rgba(230,168,79,0.22)]">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
-              <path d="M12 2C6.48 2 2 6.48 2 12c0 1.85.5 3.58 1.38 5.06L2 22l5.07-1.33A9.96 9.96 0 0012 22c5.52 0 10-4.48 10-10S17.52 2 12 2z" fill="rgba(10,26,36,0.18)"/>
-              <path d="M17.47 14.38c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.16-.17.2-.35.22-.64.08-.3-.15-1.26-.46-2.4-1.48-.88-.79-1.48-1.76-1.65-2.06-.17-.3-.02-.46.13-.6.13-.14.3-.35.44-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.67-1.61-.92-2.21-.24-.58-.49-.5-.67-.51-.17-.01-.37-.01-.57-.01-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48 0 1.46 1.06 2.88 1.21 3.07.15.2 2.1 3.2 5.08 4.49.71.31 1.26.49 1.69.62.71.23 1.36.2 1.87.12.57-.09 1.76-.72 2.01-1.41.25-.69.25-1.29.17-1.41-.07-.12-.27-.2-.57-.35z" fill="#0a1a24"/>
-            </svg>
-            Speak With Our Team
-          </a>
-        </div>
-      </div>
-
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
-        "@context": "https://schema.org", "@type": "LocalBusiness",
-        "name": COMPANY.name, "foundingDate": String(COMPANY.established),
-        "founder": { "@type": "Person", "name": "S. Rajasekaran" },
-        "telephone": COMPANY.phone.office,
-        "email": COMPANY.email,
-        "areaServed": ["Cuddalore", "Puducherry", "Tamil Nadu"],
-        "serviceType": SERVICES.map(s => s.title),
-        "numberOfEmployees": { "@type": "QuantitativeValue", "minValue": 500 }
-      })}} />
     </div>
   );
 }

@@ -78,11 +78,11 @@ export const NAV_LINKS = [
 
 export const FAQS = [
   { q: 'What staffing services does Sai Saktheeswari provide?', a: 'Security personnel deployment, labour outsourcing, contract workforce management, temporary staffing, and full statutory HR compliance (PF, ESI, Bonus Act, Contract Labour Act) for businesses across Tamil Nadu and Puducherry.' },
-  { q: 'How long has Sai Saktheeswari been in business?', a: 'Established in 1991 by S. Rajasekaran — over 35 years of continuous, trusted operation. One of the oldest and most experienced staffing companies in Cuddalore.' },
+  { q: 'How long has Sai Saktheeswari been in business?', a: 'Established in 1991 — over 35 years of continuous, trusted operation. One of the oldest and most experienced staffing companies in Cuddalore.' },
   { q: 'Which areas do you serve?', a: 'Primarily Cuddalore and Puducherry, with workforce deployments across Tamil Nadu. Head office at S.N Chavadi, Cuddalore and branch office at Ellaipillaichavadi, Puducherry.' },
   { q: 'How quickly can you deploy workers?', a: 'Standard deployment within 48–72 hours. For urgent requirements, contact us directly on WhatsApp for same-day response.' },
   { q: 'Do you handle PF and ESI for outsourced staff?', a: 'Yes. PF, ESI, Bonus Act and Contract Labour Act compliance are managed end-to-end by our in-house team — zero compliance burden on your business.' },
-  { q: 'Are your security guards specially trained?', a: 'Every guard completes our structured training programme covering security protocols, emergency response, access control, professional conduct, and grooming. Training is personally overseen by our founder S. Rajasekaran.' },
+  { q: 'Are your security guards specially trained?', a: 'Every guard completes our structured training programme covering security protocols, emergency response, access control, professional conduct, and grooming. Training is overseen by our senior training supervisors.' },
   { q: 'Do you deploy female security staff?', a: 'Yes. We deploy trained female security personnel for campuses, hospitals, commercial complexes, and events requiring women security officers.' },
   { q: 'How do I get a quote or make a requirement?', a: 'Call or WhatsApp +91 93676 26855, email saisaktheeswari@gmail.com, or submit the form on our Contact page. We respond within 24 hours.' },
 ];
