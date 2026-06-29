@@ -93,3 +93,11 @@ h1, h2, h3, h4, h5, h6 {
 /* Hide scrollbar but keep functionality */
 .scrollbar-hide::-webkit-scrollbar { display: none; }
 .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* Gallery marquee — seamless infinite scroll, pause on hover */
+@keyframes marquee-x { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+@keyframes marquee-x-rev { from { transform: translateX(-50%); } to { transform: translateX(0); } }
+.marquee-track { width: max-content; animation: marquee-x var(--dur, 70s) linear infinite; will-change: transform; }
+.marquee-track.rev { animation-name: marquee-x-rev; }
+.marquee-row:hover .marquee-track { animation-play-state: paused; }
+@media (prefers-reduced-motion: reduce) { .marquee-track { animation: none; } }

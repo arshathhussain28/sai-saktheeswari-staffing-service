@@ -6,9 +6,11 @@ import { FadeIn, StaggerChildren, StaggerItem } from '@/components/FadeIn';
 import { AnimatedCounter } from '@/components/AnimatedCounter';
 import { COMPANY, SERVICES, INDUSTRIES, NAV_LINKS, FAQS } from '@/lib/constants';
 import SocialCards from '@/components/ui/card-fan-carousel';
+import GalleryMarquee from '@/components/GalleryMarquee';
 
 /* ─── ANIMATION HELPERS ─── */
 const ease = [0.25, 0.4, 0.25, 1] as [number, number, number, number];
+const easeExpo = [0.16, 1, 0.3, 1] as [number, number, number, number];
 
 function ScrollReveal({ children, className }: { children: React.ReactNode; className?: string }) {
   const ref = useRef(null);
@@ -27,7 +29,7 @@ function ScrollReveal({ children, className }: { children: React.ReactNode; clas
 /* ─── HERO ─── */
 const HERO_SLIDES = [
   { src: '/images/dsc/formation-aerial.jpg', label: 'Guard team in disciplined formation' },
-  { src: '/images/dsc/female-guards-salute.jpg', label: 'Trained female security officers' },
+  { src: '/images/dsc/campus-patrol-1.jpg', label: 'Ceremonial guard of honour' },
   { src: '/images/home/arm-badge-patch.jpg', label: 'Sai Saktheeswari — Since 1991' },
   { src: '/images/home/guards-march.jpg', label: 'Guards in professional formation' },
   { src: '/images/home/badge-uniform.jpg', label: 'Uniform & branding standards' },
@@ -386,17 +388,27 @@ const LEGACY_CHAPTERS = [
     lines: ['One Vision.', 'One Team.', 'One Commitment.'],
     img: '/images/dsc/guard-lineup-1.jpg',
   },
+];
+
+/* Alternating editorial milestones (rendered in LegacyTimeline) */
+const LEGACY_MILESTONES = [
   {
     year: '2000', kicker: 'Expansion',
-    lines: ['Expanding Across', 'Tamil Nadu.'],
+    headline: 'Expanding Across Tamil Nadu.',
     sub: 'Trusted by industries where reliability matters most.',
     img: '/images/dsc/formation-aerial.jpg',
   },
   {
     year: '2010', kicker: 'Partnership',
-    lines: ['Building Long-Term', 'Workforce Partnerships.'],
+    headline: 'Building Long-Term Workforce Partnerships.',
     sub: 'Discipline. Scale. Trust — earned over decades.',
     img: '/images/home/guards-march.jpg',
+  },
+  {
+    year: '2025', kicker: 'Legacy',
+    headline: 'A Legacy, Sustained.',
+    sub: 'The standard set in 1991 — upheld every day since, across 500+ professionals and 100+ clients.',
+    img: '/images/dsc/team-group-1.jpg',
   },
 ];
 
@@ -433,7 +445,7 @@ function LegacyChapter({ chapter }: { chapter: typeof LEGACY_CHAPTERS[0] }) {
         <motion.div
           initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 1.1, ease: [0.22, 1, 0.36, 1] }}
-          className="font-poppins font-extrabold text-white/[0.12] leading-none mb-5 tracking-tight"
+          className="font-fraunces font-semibold leading-none mb-5 tracking-tight bg-gradient-to-b from-white/[0.18] to-white/[0.04] bg-clip-text text-transparent"
           style={{ fontSize: 'clamp(5rem, 16vw, 13rem)' }}>
           {chapter.year}
         </motion.div>
@@ -445,12 +457,6 @@ function LegacyChapter({ chapter }: { chapter: typeof LEGACY_CHAPTERS[0] }) {
               className="font-poppins text-3xl md:text-5xl lg:text-6xl font-bold text-white leading-[1.1]" />
           ))}
         </div>
-        {chapter.sub && (
-          <motion.p initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : {}} transition={{ delay: 1.1, duration: 1 }}
-            className="font-inter text-white/50 text-base lg:text-xl mt-8 max-w-lg mx-auto leading-relaxed">
-            {chapter.sub}
-          </motion.p>
-        )}
       </motion.div>
     </div>
   );
@@ -698,6 +704,157 @@ function DisciplineInMotion() {
   );
 }
 
+/* — Alternating editorial milestone (2000 · 2010 · 2025) — */
+function LegacyMilestone({ m, index }: { m: typeof LEGACY_MILESTONES[0]; index: number }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { once: true, margin: '-18%' });
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] });
+  const imgY = useTransform(scrollYProgress, [0, 1], ['-7%', '7%']);
+  const flip = index % 2 === 1;
+
+  return (
+    <div ref={ref} className="relative">
+      {/* node on the central line (desktop) */}
+      <div className="hidden lg:block absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-20">
+        <motion.span initial={{ scale: 0, opacity: 0 }} animate={inView ? { scale: 1, opacity: 1 } : {}} transition={{ duration: 0.5, ease }}
+          className="flex w-4 h-4 rounded-full bg-[#04090f] border-2 border-[#e6a84f] items-center justify-center">
+          <span className="w-1.5 h-1.5 rounded-full bg-[#e6a84f] shadow-[0_0_12px_rgba(230,168,79,0.9)]" />
+        </motion.span>
+      </div>
+
+      <div className="grid lg:grid-cols-2 gap-8 lg:gap-20 items-center">
+        {/* IMAGE — soft-morphism frame + parallax */}
+        <motion.div initial={{ opacity: 0, y: 42 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.9, ease }}
+          className={`relative ${flip ? 'lg:order-2' : ''}`}>
+          <div className="relative rounded-[1.75rem] p-2 bg-gradient-to-br from-[#0e1c28] to-[#070e16] border border-white/10
+            shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_30px_64px_rgba(0,0,0,0.55)]">
+            <div className="relative aspect-[16/11] overflow-hidden rounded-[1.4rem]">
+              <motion.img style={{ y: imgY }} src={m.img} alt={`Sai Saktheeswari — ${m.kicker}`}
+                className="absolute inset-0 w-full h-[118%] object-cover will-change-transform" />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#04090f]/65 via-transparent to-transparent" />
+              <div className="absolute inset-3 rounded-[1.1rem] border border-[#e6a84f]/15 pointer-events-none" />
+            </div>
+          </div>
+        </motion.div>
+
+        {/* TEXT */}
+        <div className={`relative ${flip ? 'lg:order-1 lg:pr-12' : 'lg:pl-12'}`}>
+          <motion.span initial={{ opacity: 0, y: 26 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.9, ease }}
+            className="block font-fraunces font-semibold leading-[0.9] tracking-tight bg-gradient-to-br from-[#f7d99a] via-[#e6a84f] to-[#c8902e] bg-clip-text text-transparent drop-shadow-[0_4px_30px_rgba(230,168,79,0.18)]"
+            style={{ fontSize: 'clamp(3.4rem, 8vw, 6rem)' }}>
+            {m.year}
+          </motion.span>
+          <motion.p initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : {}} transition={{ delay: 0.2, duration: 0.8 }}
+            className="font-inter text-[#f0be6a] text-[11px] tracking-[0.4em] uppercase mt-3 mb-5">{m.kicker}</motion.p>
+          <RevealHeading inView={inView} text={m.headline}
+            className="font-poppins text-3xl md:text-4xl lg:text-5xl font-extrabold text-white leading-[1.06] tracking-[-0.01em]" />
+          <motion.p initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : {}} transition={{ delay: 0.7, duration: 0.9 }}
+            className="font-inter text-white/65 text-base lg:text-lg leading-relaxed mt-6 max-w-md">{m.sub}</motion.p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* — Cinematic aurora background (21st.dev-inspired): drifting light, depth grid, beam, particles, grain — */
+function AuroraBackground() {
+  return (
+    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      {/* drifting aurora light */}
+      <motion.div animate={{ x: ['-8%', '10%', '-8%'], y: ['-6%', '8%', '-6%'], scale: [1, 1.18, 1] }}
+        transition={{ duration: 24, repeat: Infinity, ease: 'easeInOut' }}
+        className="absolute -top-32 left-[16%] w-[42rem] h-[42rem] rounded-full blur-[120px] bg-[radial-gradient(circle,rgba(230,168,79,0.18),transparent_60%)]" />
+      <motion.div animate={{ x: ['8%', '-10%', '8%'], y: ['6%', '-8%', '6%'], scale: [1.12, 1, 1.12] }}
+        transition={{ duration: 28, repeat: Infinity, ease: 'easeInOut' }}
+        className="absolute top-[26%] right-[12%] w-[36rem] h-[36rem] rounded-full blur-[130px] bg-[radial-gradient(circle,rgba(45,122,151,0.20),transparent_62%)]" />
+      <motion.div animate={{ x: ['-6%', '8%', '-6%'], y: ['8%', '-4%', '8%'], scale: [1, 1.1, 1] }}
+        transition={{ duration: 32, repeat: Infinity, ease: 'easeInOut' }}
+        className="absolute -bottom-24 left-[34%] w-[38rem] h-[38rem] rounded-full blur-[140px] bg-[radial-gradient(circle,rgba(200,144,46,0.12),transparent_60%)]" />
+
+      {/* depth grid, masked to centre */}
+      <div className="absolute inset-0 opacity-[0.05]"
+        style={{ backgroundImage: 'linear-gradient(#e6a84f 1px, transparent 1px), linear-gradient(90deg, #e6a84f 1px, transparent 1px)', backgroundSize: '58px 58px', WebkitMaskImage: 'radial-gradient(ellipse 70% 62% at 50% 38%, #000 26%, transparent 76%)', maskImage: 'radial-gradient(ellipse 70% 62% at 50% 38%, #000 26%, transparent 76%)' }} />
+
+      {/* sweeping light beam */}
+      <motion.div animate={{ x: ['-45%', '150%'] }} transition={{ duration: 11, repeat: Infinity, ease: 'easeInOut', repeatDelay: 5 }}
+        className="absolute top-0 h-full w-1/4 bg-gradient-to-r from-transparent via-[#e6a84f]/[0.06] to-transparent skew-x-[16deg] blur-md" />
+
+      {/* very subtle floating particles */}
+      {[...Array(14)].map((_, i) => (
+        <motion.span key={i}
+          className="absolute w-[3px] h-[3px] rounded-full bg-[#f0be6a]/50"
+          style={{ left: `${(i * 7.3 + 4) % 96}%`, top: `${(i * 11.7 + 6) % 92}%` }}
+          animate={{ y: [0, -34, 0], opacity: [0, 0.7, 0] }}
+          transition={{ duration: 7 + (i % 5), repeat: Infinity, ease: 'easeInOut', delay: i * 0.6 }} />
+      ))}
+
+      {/* film-grain noise */}
+      <div className="absolute inset-0 opacity-[0.04] mix-blend-soft-light"
+        style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")", backgroundSize: '200px 200px' }} />
+
+      {/* vignette to anchor text */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_32%,rgba(4,9,15,0.82)_88%)]" />
+      <div className="absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-[#04090f] to-transparent" />
+      <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-[#04090f] to-transparent" />
+    </div>
+  );
+}
+
+/* — Editorial timeline: 2000 · 2010 · 2025 · cinematic aurora + scroll-drawn line — */
+function LegacyTimeline() {
+  const ref = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start 60%', 'end 80%'] });
+  const lineScaleY = useTransform(scrollYProgress, [0, 1], [0, 1]);
+  const cometTop = useTransform(scrollYProgress, [0, 1], ['0%', '100%']);
+  const cometOpacity = useTransform(scrollYProgress, [0, 0.04, 0.96, 1], [0, 1, 1, 0]);
+
+  // mouse-reactive ambient glow
+  const mx = useMotionValue(0.5);
+  const my = useMotionValue(0.15);
+  const glowX = useSpring(useTransform(mx, [0, 1], ['8%', '92%']), { stiffness: 50, damping: 22 });
+  const glowY = useSpring(useTransform(my, [0, 1], ['0%', '100%']), { stiffness: 50, damping: 22 });
+  const onMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const r = e.currentTarget.getBoundingClientRect();
+    mx.set((e.clientX - r.left) / r.width);
+    my.set((e.clientY - r.top) / r.height);
+  };
+
+  return (
+    <div ref={ref} onMouseMove={onMove} className="relative bg-[#04090f] py-24 lg:py-36 overflow-hidden">
+      <AuroraBackground />
+      <motion.div style={{ left: glowX, top: glowY }}
+        className="absolute hidden lg:block w-[30rem] h-[30rem] -translate-x-1/2 -translate-y-1/2 rounded-full blur-[110px] bg-[radial-gradient(circle,rgba(230,168,79,0.1),transparent_60%)] pointer-events-none" />
+
+      <FadeIn className="relative z-10 text-center mb-20 lg:mb-28 px-6">
+        <div className="inline-flex items-center gap-2.5 mb-6">
+          <span className="w-8 h-px bg-[#e6a84f]" />
+          <span className="font-inter text-[#f0be6a] text-[11px] tracking-[0.4em] uppercase">The Milestones</span>
+          <span className="w-8 h-px bg-[#e6a84f]" />
+        </div>
+        <h2 className="font-poppins font-extrabold text-white text-4xl lg:text-6xl leading-[1.04]">
+          Three decades,
+          <span className="block font-fraunces italic font-medium bg-gradient-to-r from-[#f7d99a] to-[#c8902e] bg-clip-text text-transparent mt-1">measured in milestones.</span>
+        </h2>
+      </FadeIn>
+
+      <div className="relative z-10 max-w-7xl mx-auto px-5 sm:px-8">
+        {/* central timeline line (desktop) */}
+        <div className="hidden lg:block absolute left-1/2 top-0 bottom-0 w-px -translate-x-1/2 bg-white/10" />
+        <motion.div style={{ scaleY: lineScaleY }} className="hidden lg:block absolute left-1/2 top-0 bottom-0 w-px -translate-x-1/2 origin-top bg-gradient-to-b from-[#f0be6a] via-[#e6a84f] to-[#c8902e] shadow-[0_0_16px_rgba(230,168,79,0.7)]" />
+        {/* traveling comet head */}
+        <motion.div style={{ top: cometTop, opacity: cometOpacity }}
+          className="hidden lg:block absolute left-1/2 -translate-x-1/2 -translate-y-1/2 z-10">
+          <span className="block w-2.5 h-2.5 rounded-full bg-[#f7d99a] shadow-[0_0_18px_6px_rgba(230,168,79,0.6)]" />
+        </motion.div>
+
+        <div className="space-y-24 lg:space-y-36">
+          {LEGACY_MILESTONES.map((m, i) => <LegacyMilestone key={m.year} m={m} index={i} />)}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function LegacyExperience() {
   const introRef = useRef<HTMLDivElement>(null);
   const introInView = useInView(introRef, { once: true, margin: '-15%' });
@@ -736,6 +893,7 @@ function LegacyExperience() {
 
       {/* ── SECTION 1 · LEGACY STORY ── */}
       {LEGACY_CHAPTERS.map((c, i) => <LegacyChapter key={i} chapter={c} />)}
+      <LegacyTimeline />
       <LegacyFinale />
 
       {/* ── SECTION 2 · WORKFORCE EXCELLENCE ── */}
@@ -945,10 +1103,11 @@ function ServicesSection() {
 
 /* ─── 4S ENTERPRISE PROCESS ─── */
 
-const ENT_METRICS = [
-  { display: '10,000+', label: 'Workforce in Network' },
-  { display: '500+', label: 'Client Businesses' },
-  { display: '95%', label: 'Year-One Retention' },
+type EntMetric = { value?: number; suffix?: string; comma?: boolean; display?: string; label: string };
+const ENT_METRICS: EntMetric[] = [
+  { value: 10000, suffix: '+', comma: true, label: 'Workforce in Network' },
+  { value: 500, suffix: '+', label: 'Client Businesses' },
+  { value: 95, suffix: '%', label: 'Year-One Retention' },
   { display: '24/7', label: 'Support Coverage' },
 ];
 
@@ -1068,94 +1227,198 @@ function ProcessStepPanel({ step, index }: { step: typeof PROCESS_STEPS[0]; inde
   );
 }
 
+function ProcessMetric({ m }: { m: EntMetric }) {
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true, margin: '-30px' });
+  const [n, setN] = useState(0);
+  useEffect(() => {
+    if (!inView || m.value == null) return;
+    let raf = 0;
+    const start = performance.now();
+    const dur = 1700;
+    const tick = (t: number) => {
+      const p = Math.min((t - start) / dur, 1);
+      setN(Math.round(m.value! * (1 - Math.pow(1 - p, 4))));
+      if (p < 1) raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [inView, m.value]);
+  const text = m.display ?? `${m.comma ? n.toLocaleString('en-IN') : n}${m.suffix ?? ''}`;
+  return (
+    <motion.div ref={ref}
+      initial={{ opacity: 0, y: 26, scale: 0.96 }} whileInView={{ opacity: 1, y: 0, scale: 1 }} viewport={{ once: true }} transition={{ duration: 0.65, ease: easeExpo }}
+      className="group relative bg-[#0a1422]/85 backdrop-blur-xl border border-[#e6a84f]/20 rounded-2xl p-5 lg:p-7 text-center shadow-[0_20px_55px_rgba(0,0,0,0.55)] hover:border-[#e6a84f]/45 hover:-translate-y-1.5 transition-all duration-300 overflow-hidden">
+      <span className="absolute -top-10 left-1/2 -translate-x-1/2 w-28 h-20 bg-[#e6a84f]/12 blur-2xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+      <span className="relative block font-poppins font-extrabold text-[#e6a84f] text-[2rem] lg:text-[2.7rem] leading-none tabular-nums drop-shadow-[0_2px_16px_rgba(230,168,79,0.35)]">{text}</span>
+      <span className="relative block font-inter text-white/65 text-[9.5px] lg:text-[10.5px] uppercase tracking-[0.18em] mt-3 font-medium">{m.label}</span>
+    </motion.div>
+  );
+}
+
 function ProcessSection() {
-  const containerRef = useRef(null);
-  const { scrollYProgress } = useScroll({ target: containerRef, offset: ['start start', '25% start'] });
-  const heroImgY = useTransform(scrollYProgress, [0, 1], [0, -55]);
+  const heroRef = useRef(null);
+  const { scrollYProgress: heroProg } = useScroll({ target: heroRef, offset: ['start start', 'end start'] });
+  const heroImgY = useTransform(heroProg, [0, 1], ['0%', '15%']);
+  const heroScale = useTransform(heroProg, [0, 1], [1.06, 1.18]);
+
+  const journeyRef = useRef(null);
+  const { scrollYProgress: jProg } = useScroll({ target: journeyRef, offset: ['start 78%', 'center 55%'] });
+  const lineScaleX = useTransform(jProg, [0, 1], [0, 1]);
+
+  const stages = PROCESS_STEPS.map((s) => ({ num: s.num, key: s.key, eyebrow: s.eyebrow, desc: s.desc, points: s.points, stat: s.stat, statLabel: s.statLabel }));
 
   return (
-    <section ref={containerRef} id="process" className="relative bg-[#050d1a] overflow-hidden">
+    <section id="process" className="relative bg-[#050d1a] overflow-hidden">
 
-      {/* ── ENTERPRISE HEADER ── */}
-      <div className="relative py-24 lg:py-36 text-center overflow-hidden">
-        {/* Workforce-in-formation background — real company photo */}
-        <div className="absolute inset-0 pointer-events-none select-none" aria-hidden="true">
-          <img
-            src="/images/dsc/guard-lineup-3.jpg"
-            alt=""
-            className="w-full h-full object-cover object-center"
-          />
-          {/* Layered scrim — guarantees 4.5:1 text contrast over the photo */}
-          <div className="absolute inset-0 bg-[#050d1a]/[0.88]" />
-          <div className="absolute inset-0 bg-gradient-to-b from-[#050d1a] via-[#050d1a]/72 to-[#050d1a]" />
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_55%_at_50%_45%,transparent,rgba(5,13,26,0.6))]" />
-        </div>
-        {/* Warm gold glow from below */}
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_50%_at_50%_100%,rgba(230,168,79,0.12),transparent)] pointer-events-none" />
+      {/* ── HERITAGE EDITORIAL HERO — asymmetric · soft-morphism ── */}
+      <div ref={heroRef} className="relative min-h-screen flex items-center overflow-hidden py-32 lg:py-36 bg-[#04090f]">
+        {/* faint formation atmosphere on the right + gold floor glow + fine grid */}
+        <motion.div style={{ y: heroImgY }} className="absolute inset-y-0 right-0 w-full lg:w-[60%] will-change-transform">
+          <img src="/images/dsc/formation-aerial.jpg" alt="" aria-hidden className="w-full h-full object-cover object-center opacity-[0.18] lg:opacity-[0.28]" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#04090f] via-[#04090f]/75 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#04090f] via-transparent to-[#04090f]/60" />
+        </motion.div>
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_50%_at_50%_122%,rgba(230,168,79,0.13),transparent)] pointer-events-none" />
+        <div className="absolute inset-0 opacity-[0.025] pointer-events-none" style={{ backgroundImage: 'linear-gradient(#e6a84f 1px, transparent 1px), linear-gradient(90deg, #e6a84f 1px, transparent 1px)', backgroundSize: '64px 64px' }} />
 
-        <FadeIn className="relative z-10 mb-14 px-4">
-          <div className="inline-flex items-center gap-2 bg-[#e6a84f]/14 border border-[#e6a84f]/35 rounded-full px-4 py-1.5 mb-7 backdrop-blur-sm">
-            <div className="w-1.5 h-1.5 rounded-full bg-[#e6a84f] animate-pulse" />
-            <span className="font-inter text-[#f0be6a] text-[10px] font-bold tracking-[0.3em] uppercase">35 Years · Proven Methodology</span>
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+          <div className="grid lg:grid-cols-12 gap-12 lg:gap-10 items-center">
+
+            {/* LEFT — editorial */}
+            <div className="lg:col-span-7">
+              <motion.div initial={{ opacity: 0, y: 14 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.7, ease: easeExpo }}
+                className="flex items-center gap-4 mb-8">
+                <span className="h-px w-14 bg-gradient-to-r from-[#e6a84f] to-transparent" />
+                <span className="font-inter text-[#f0be6a] text-[10px] font-semibold tracking-[0.42em] uppercase">Est. 1991 · Proven Methodology</span>
+              </motion.div>
+
+              <h2 className="font-poppins font-extrabold leading-[0.86] tracking-[-0.03em]">
+                <motion.span initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: '-10%' }} transition={{ duration: 0.85, delay: 0.05, ease: easeExpo }}
+                  className="block text-[4rem] sm:text-7xl lg:text-8xl xl:text-[9rem] text-white">The 4<span className="text-[#e6a84f]">S</span></motion.span>
+                <motion.span initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: '-10%' }} transition={{ duration: 0.85, delay: 0.16, ease: easeExpo }}
+                  className="block text-[4rem] sm:text-7xl lg:text-8xl xl:text-[9rem] text-white/45">System</motion.span>
+              </h2>
+
+              <motion.p initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.8, delay: 0.42, ease: easeExpo }}
+                className="font-fraunces italic text-[#f0be6a] text-2xl lg:text-[2.1rem] leading-snug mt-6">
+                Four disciplined stages. One workforce standard.
+              </motion.p>
+
+              <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ duration: 0.7, delay: 0.58 }}
+                className="font-inter text-white/70 text-base lg:text-lg max-w-lg leading-relaxed mt-7">
+                Every worker we deploy follows our proprietary 4S journey — from talent sourcing to long-term performance assurance.
+              </motion.p>
+
+              <motion.div initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.7, delay: 0.72, ease: easeExpo }}
+                className="flex flex-wrap items-center gap-x-5 gap-y-2.5 mt-9">
+                {['Source', 'Screen', 'Support', 'Sustain'].map((st, i) => (
+                  <div key={st} className="flex items-center gap-5">
+                    {i > 0 && <span className="h-1 w-1 rounded-full bg-[#e6a84f]/50" />}
+                    <span className="font-inter text-white/55 text-xs tracking-[0.16em] uppercase">
+                      <span className="font-fraunces italic text-[#e6a84f]/80 mr-1.5 not-italic">0{i + 1}</span>{st}
+                    </span>
+                  </div>
+                ))}
+              </motion.div>
+            </div>
+
+            {/* RIGHT — soft-morphism framed image + floating emblem */}
+            <div className="lg:col-span-5">
+              <motion.div initial={{ opacity: 0, scale: 0.94, y: 30 }} whileInView={{ opacity: 1, scale: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 1, delay: 0.3, ease: easeExpo }}
+                className="relative">
+                <div className="relative rounded-[2rem] p-2 bg-gradient-to-br from-[#0e1c28] to-[#070e16] border border-white/10
+                  shadow-[inset_0_1px_0_rgba(255,255,255,0.07),0_30px_70px_rgba(0,0,0,0.6),0_0_0_1px_rgba(230,168,79,0.1)]">
+                  <div className="relative aspect-[4/5] overflow-hidden rounded-[1.5rem]">
+                    <motion.img style={{ scale: heroScale }} src="/images/dsc/formation-aerial.jpg"
+                      alt="Sai Saktheeswari workforce in disciplined formation, viewed from above"
+                      className="absolute inset-0 w-full h-full object-cover will-change-transform" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#04090f]/75 via-transparent to-transparent" />
+                    <div className="absolute inset-3 rounded-[1.2rem] border border-[#e6a84f]/20 pointer-events-none" />
+                    <span className="absolute bottom-4 left-4 font-inter text-white/85 text-[11px] bg-[#04090f]/55 backdrop-blur-md border border-white/10 rounded-lg px-3 py-1.5">
+                      Disciplined formation · Cuddalore
+                    </span>
+                  </div>
+                </div>
+
+                <motion.div animate={{ y: [0, -10, 0] }} transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
+                  className="absolute -top-5 -left-4 sm:-left-7 w-24 h-24 rounded-full flex flex-col items-center justify-center text-center
+                    bg-gradient-to-br from-[#16232f] to-[#070e16] border border-[#e6a84f]/30
+                    shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_18px_40px_rgba(0,0,0,0.55)]">
+                  <span className="font-fraunces font-semibold text-[#e6a84f] text-[1.7rem] leading-none">35</span>
+                  <span className="font-inter text-white/50 text-[8px] tracking-[0.25em] uppercase mt-1">Years</span>
+                </motion.div>
+              </motion.div>
+            </div>
           </div>
-          <h2 className="font-poppins text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-extrabold text-white leading-[0.92] mb-6 drop-shadow-[0_2px_24px_rgba(0,0,0,0.7)]">
-            The 4<span className="text-[#e6a84f]">S</span><br />
-            <span className="text-white">Workforce</span><br />
-            <span className="text-white/60">System</span>
-          </h2>
-          <p className="font-inter text-white/80 text-base lg:text-lg max-w-xl mx-auto leading-relaxed drop-shadow-[0_1px_14px_rgba(0,0,0,0.6)]">
-            Every worker we deploy follows our proprietary 4S journey — from talent sourcing to long-term performance assurance.
-          </p>
-        </FadeIn>
 
-        {/* Enterprise metrics strip */}
-        <div className="relative z-10 max-w-5xl mx-auto px-4">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-0 lg:bg-[#0a1422]/75 lg:backdrop-blur-xl lg:border lg:border-[#e6a84f]/18 lg:rounded-2xl lg:overflow-hidden lg:shadow-[0_24px_70px_rgba(0,0,0,0.55)]">
-            {ENT_METRICS.map((m, i) => (
-              <ScrollReveal key={i}
-                className="bg-[#0a1422]/75 backdrop-blur-xl border border-[#e6a84f]/18 rounded-2xl lg:rounded-none lg:bg-transparent lg:border-0 lg:border-r last:lg:border-r-0 lg:border-white/10 p-6 lg:p-8 flex flex-col items-center gap-2">
-                <span className="font-poppins text-3xl lg:text-4xl xl:text-5xl font-extrabold text-[#e6a84f] drop-shadow-[0_2px_14px_rgba(230,168,79,0.3)]">{m.display}</span>
-                <span className="font-inter text-white/72 text-[9px] lg:text-[10px] uppercase tracking-[0.2em] text-center font-medium">{m.label}</span>
-              </ScrollReveal>
+          {/* Floating soft-morphism metric cards */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4 mt-14 lg:mt-20">
+            {ENT_METRICS.map((m, i) => (<ProcessMetric key={i} m={m} />))}
+          </div>
+        </div>
+
+        {/* scroll cue */}
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.4 }}
+          className="absolute bottom-6 left-1/2 -translate-x-1/2 hidden lg:block">
+          <motion.div animate={{ y: [0, 8, 0] }} transition={{ duration: 2, repeat: Infinity }}
+            className="w-5 h-8 border border-white/25 rounded-full flex justify-center pt-1.5">
+            <div className="w-1 h-1.5 bg-[#e6a84f]/70 rounded-full" />
+          </motion.div>
+        </motion.div>
+      </div>
+
+      {/* ── 4S JOURNEY — compact & detailed (replaces the 4 full-screen panels) ── */}
+      <div ref={journeyRef} className="relative bg-[#04090f] py-20 lg:py-28 border-t border-white/[0.05] overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_50%_60%_at_50%_0%,rgba(230,168,79,0.06),transparent)] pointer-events-none" />
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <FadeIn className="text-center mb-10">
+            <p className="font-inter text-[#e6a84f] text-[11px] font-bold tracking-[0.4em] uppercase mb-3">The 4S Journey</p>
+            <h3 className="font-fraunces italic text-white/90 text-2xl lg:text-[2.2rem] leading-snug">Four disciplined stages, one standard.</h3>
+          </FadeIn>
+
+          {/* scroll-drawn progress track */}
+          <div className="relative h-px w-40 mx-auto mb-14 bg-white/10 overflow-hidden rounded-full">
+            <motion.div style={{ scaleX: lineScaleX }} className="absolute inset-0 origin-left bg-gradient-to-r from-[#f0be6a] to-[#c8902e]" />
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-5">
+            {stages.map((st, i) => (
+              <motion.div key={st.key}
+                initial={{ opacity: 0, y: 28, scale: 0.97 }} whileInView={{ opacity: 1, y: 0, scale: 1 }} viewport={{ once: true, margin: '-50px' }} transition={{ duration: 0.7, delay: i * 0.1, ease: easeExpo }}
+                className="group relative overflow-hidden rounded-3xl p-7 lg:p-8 bg-white/[0.03] border border-white/[0.07] hover:border-[#e6a84f]/30 transition-all duration-400 hover:-translate-y-1.5 hover:shadow-[0_24px_56px_rgba(0,0,0,0.45)]">
+                {/* faint numeral watermark + hover glow */}
+                <span className="absolute -top-5 right-3 font-fraunces italic text-white/[0.04] text-[7rem] leading-none select-none pointer-events-none">{st.num}</span>
+                <span className="absolute -top-16 -right-10 w-48 h-48 bg-[#e6a84f]/10 blur-3xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+                <div className="relative">
+                  <div className="flex items-center gap-3 mb-2">
+                    <span className="font-fraunces italic text-[#e6a84f] text-2xl leading-none">{st.num}</span>
+                    <span className="h-px w-7 bg-[#e6a84f]/40" />
+                    <span className="font-inter text-[#f0be6a]/80 text-[10px] font-semibold uppercase tracking-[0.18em]">{st.eyebrow}</span>
+                  </div>
+                  <h4 className="font-poppins font-extrabold text-white text-2xl tracking-[-0.01em] mb-2.5">{st.key}</h4>
+                  <p className="font-inter text-white/70 text-sm leading-relaxed">{st.desc}</p>
+
+                  <div className="grid grid-cols-2 gap-x-4 gap-y-2.5 mt-5">
+                    {st.points.map((pt) => (
+                      <div key={pt} className="flex items-start gap-2">
+                        <svg width="13" height="13" viewBox="0 0 14 14" fill="none" className="text-[#e6a84f] flex-shrink-0 mt-0.5"><path d="M2 7.5l3 3 7-8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                        <span className="font-inter text-white/65 text-[12.5px] leading-snug">{pt}</span>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="flex items-baseline gap-2.5 mt-6 pt-5 border-t border-white/[0.07]">
+                    <span className="font-poppins font-extrabold text-[#e6a84f] text-2xl tabular-nums">{st.stat}</span>
+                    <span className="font-inter text-white/55 text-xs">{st.statLabel}</span>
+                  </div>
+                </div>
+              </motion.div>
             ))}
           </div>
         </div>
       </div>
-
-      {/* ── AERIAL FORMATION BANNER ── */}
-      <div className="relative overflow-hidden" style={{ height: 'clamp(260px, 42vw, 520px)' }}>
-        <motion.img style={{ y: heroImgY }}
-          src="/images/dsc/formation-aerial.jpg"
-          alt="Sai Saktheeswari security guards in S-formation — over 500 workforce strong"
-          className="absolute inset-0 w-full h-full object-cover object-center scale-[1.2] brightness-[0.35]" />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#050d1a] via-[#050d1a]/10 to-[#050d1a]" />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#050d1a]/60 via-transparent to-[#050d1a]/60" />
-
-        {/* 4S journey dots */}
-        <div className="absolute inset-0 flex items-center justify-center px-4">
-          <FadeIn className="text-center">
-            <p className="font-inter text-white/20 text-[9px] tracking-[0.5em] uppercase mb-7">The 4S Journey</p>
-            <div className="flex items-center justify-center">
-              {(['SOURCE', 'SCREEN', 'SUPPORT', 'SUSTAIN'] as const).map((s, i) => (
-                <div key={s} className="flex items-center">
-                  <div className="flex flex-col items-center">
-                    <div className="w-2.5 h-2.5 rounded-full bg-[#e6a84f] shadow-[0_0_16px_rgba(230,168,79,0.7)]" />
-                    <span className="font-poppins text-white/65 font-bold text-[9px] sm:text-[10px] mt-3 tracking-[0.18em]">{s}</span>
-                  </div>
-                  {i < 3 && (
-                    <div className="w-8 sm:w-14 lg:w-24 xl:w-32 h-px bg-gradient-to-r from-[#e6a84f]/55 to-[#e6a84f]/12 mx-0.5" />
-                  )}
-                </div>
-              ))}
-            </div>
-          </FadeIn>
-        </div>
-      </div>
-
-      {/* ── 4 STEP STORIES ── */}
-      {PROCESS_STEPS.map((step, i) => (
-        <ProcessStepPanel key={i} step={step} index={i} />
-      ))}
 
     </section>
   );
@@ -1610,163 +1873,274 @@ function IndustriesSection() {
 /* ─── DEPLOYMENT BANNER ─── */
 function DeploymentBanner() {
   return (
-    <section className="relative overflow-hidden h-80 md:h-96">
-      <img src="/images/dsc/formation-aerial.jpg" alt="Security formation"
-        className="absolute inset-0 w-full h-full object-cover object-top" />
-      <div className="absolute inset-0 bg-gradient-to-r from-[#0d4f64]/90 to-[#0e1f2f]/70" />
-      <div className="relative z-10 h-full flex items-center">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-          <FadeIn direction="left">
-            <h2 className="font-poppins text-3xl md:text-4xl font-bold text-white mb-4">
-              Professionally Trained. Reliably Deployed.
-            </h2>
-            <p className="font-inter text-white/75 text-base mb-8 max-w-lg">
-              Our guards arrive at your site disciplined, uniformed, and ready — every single time.
-            </p>
-            <a href="/contact"
-              className="bg-[#e6a84f] hover:bg-[#c8902e] text-[#0e1f2f] font-poppins font-bold px-8 py-4 rounded-xl transition-all shadow-xl">
-              Request Security Personnel →
-            </a>
-          </FadeIn>
-        </div>
+    <section className="relative overflow-hidden py-28 lg:py-36">
+      <img src="/images/dsc/formation-aerial.jpg" alt="" aria-hidden
+        className="absolute inset-0 w-full h-full object-cover object-top brightness-[0.3]" />
+      <div className="absolute inset-0 bg-gradient-to-r from-[#04090f] via-[#04090f]/82 to-[#04090f]/35" />
+      <div className="absolute inset-0 bg-gradient-to-t from-[#04090f] via-transparent to-[#04090f]/70" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_55%_55%_at_18%_100%,rgba(230,168,79,0.15),transparent)] pointer-events-none" />
+
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <motion.div initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.7, ease: easeExpo }}
+          className="inline-flex items-center gap-2.5 bg-[#e6a84f]/[0.08] border border-[#e6a84f]/25 rounded-full pl-2.5 pr-4 py-1.5 mb-7 backdrop-blur-md">
+          <span className="h-1.5 w-1.5 rounded-full bg-[#e6a84f]" />
+          <span className="font-inter text-[#f0be6a] text-[11px] font-semibold tracking-[0.22em] uppercase">Trusted by 100+ businesses · Since 1991</span>
+        </motion.div>
+
+        <motion.h2 initial={{ opacity: 0, y: 22 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.8, ease: easeExpo }}
+          className="font-poppins font-extrabold text-white text-4xl sm:text-5xl lg:text-6xl leading-[1.04] tracking-[-0.02em] max-w-3xl">
+          Professionally trained.
+          <span className="block font-fraunces italic font-medium bg-gradient-to-r from-[#f7d99a] to-[#c8902e] bg-clip-text text-transparent mt-1">Reliably deployed.</span>
+        </motion.h2>
+        <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ delay: 0.2, duration: 0.8 }}
+          className="font-inter text-white/72 text-base lg:text-lg mt-6 max-w-xl leading-relaxed">
+          Our guards arrive at your site disciplined, uniformed, and ready — every single time.
+        </motion.p>
+
+        <motion.div initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.32, duration: 0.7, ease: easeExpo }}
+          className="flex flex-col sm:flex-row gap-3.5 mt-9">
+          <a href="/contact"
+            className="group relative overflow-hidden inline-flex items-center justify-center gap-2.5 bg-gradient-to-br from-[#f0be6a] via-[#e6a84f] to-[#c8902e] text-[#0a1a24] font-poppins font-bold text-sm px-7 py-3.5 rounded-xl shadow-[0_8px_30px_rgba(230,168,79,0.35)] hover:shadow-[0_12px_44px_rgba(230,168,79,0.55)] hover:-translate-y-0.5 active:scale-[0.98] transition-all duration-300">
+            <span className="relative z-10">Request Security Personnel</span>
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" className="relative z-10 transition-transform duration-300 group-hover:translate-x-1"><path d="M2 7h9.5M7.5 3l4 4-4 4" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg>
+            <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
+          </a>
+          <a href="#contact"
+            className="inline-flex items-center justify-center gap-2 bg-white/[0.06] hover:bg-white/[0.12] backdrop-blur-md border border-white/20 hover:border-[#e6a84f]/50 text-white font-poppins font-semibold text-sm px-7 py-3.5 rounded-xl active:scale-[0.98] transition-all duration-300">
+            Get In Touch
+          </a>
+        </motion.div>
       </div>
     </section>
   );
 }
 
-/* ─── LEAD FORM ─── */
+/* ─── LEAD FORM — premium dark contact experience ─── */
+function ContactCard({ c }: { c: { key: string; label: string; val: string; raw: string; href: string; ext?: boolean; tint: string; icon: React.ReactNode } }) {
+  const [copied, setCopied] = useState(false);
+  const copy = (e: React.MouseEvent) => {
+    e.preventDefault();
+    navigator.clipboard?.writeText(c.raw).then(() => { setCopied(true); setTimeout(() => setCopied(false), 1500); });
+  };
+  return (
+    <a href={c.href} {...(c.ext ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+      className="group relative flex items-center gap-4 bg-white/[0.03] border border-white/[0.08] hover:border-[#e6a84f]/30 rounded-2xl p-4 transition-all duration-300 hover:-translate-y-0.5 overflow-hidden">
+      <span className="absolute -top-10 -right-8 w-24 h-24 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{ backgroundColor: `${c.tint}22` }} />
+      <span className="relative w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 border transition-transform duration-300 group-hover:scale-105"
+        style={{ color: c.tint, backgroundColor: `${c.tint}1a`, borderColor: `${c.tint}33` }}>{c.icon}</span>
+      <div className="relative min-w-0">
+        <p className="font-inter text-white/45 text-[11px] uppercase tracking-wide">{c.label}</p>
+        <p className="font-poppins font-semibold text-white text-sm truncate">{c.val}</p>
+      </div>
+      <button type="button" onClick={copy} aria-label={`Copy ${c.label}`}
+        className="relative ml-auto flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center text-white/40 hover:text-[#e6a84f] hover:bg-white/[0.06] transition-colors">
+        {copied
+          ? (<svg width="15" height="15" viewBox="0 0 14 14" fill="none"><path d="M2 7.5l3 3 7-8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>)
+          : (<svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.4"><rect x="5" y="5" width="8" height="9" rx="1.5" /><path d="M11 5V3.5A1.5 1.5 0 0 0 9.5 2H4a2 2 0 0 0-2 2v6.5A1.5 1.5 0 0 0 3.5 12" /></svg>)}
+      </button>
+    </a>
+  );
+}
+
 function LeadForm() {
   const [form, setForm] = useState({ name: '', company: '', phone: '', industry: '', message: '' });
+  const [errors, setErrors] = useState<Record<string, boolean>>({});
+  const [sent, setSent] = useState(false);
   const onChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) =>
     setForm(p => ({ ...p, [e.target.name]: e.target.value }));
-  const onSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    const sub = encodeURIComponent(`Workforce Enquiry from ${form.name} — ${form.company}`);
-    const body = encodeURIComponent(`Name: ${form.name}\nCompany: ${form.company}\nPhone: ${form.phone}\nIndustry: ${form.industry}\n\nRequirement:\n${form.message}`);
-    window.location.href = `mailto:${COMPANY.email}?subject=${sub}&body=${body}`;
-  };
 
-  const inputCls = "w-full border border-gray-200 rounded-xl px-4 py-3 font-inter text-sm text-[#1a2a3a] focus:outline-none focus:border-[#0d4f64] focus:ring-2 focus:ring-[#e8f4f8] transition-all bg-white";
+  const validate = () => {
+    const er: Record<string, boolean> = {};
+    if (!form.name.trim()) er.name = true;
+    if (!/^[\d+\s-]{8,}$/.test(form.phone.trim())) er.phone = true;
+    setErrors(er);
+    return Object.keys(er).length === 0;
+  };
+  const onSubmit = (e: React.FormEvent) => { e.preventDefault(); if (validate()) setSent(true); };
+  const mailtoHref = () => {
+    const sub = encodeURIComponent(`Workforce Enquiry from ${form.name}${form.company ? ' — ' + form.company : ''}`);
+    const body = encodeURIComponent(`Name: ${form.name}\nCompany: ${form.company || '—'}\nPhone: ${form.phone}\nIndustry: ${form.industry || '—'}\n\nRequirement:\n${form.message}`);
+    return `mailto:${COMPANY.email}?subject=${sub}&body=${body}`;
+  };
+  const waHref = () => `https://wa.me/${COMPANY.phone.whatsapp}?text=${encodeURIComponent(`Hello, I have a workforce requirement.\nName: ${form.name || '—'}\nIndustry: ${form.industry || '—'}\n${form.message || ''}`)}`;
+
+  const contacts = [
+    { key: 'call', label: 'Call Us', val: COMPANY.phone.primary, raw: COMPANY.phone.primary, href: `tel:${COMPANY.phone.primary.replace(/\s/g, '')}`, tint: '#e6a84f',
+      icon: (<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.9.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92Z" /></svg>) },
+    { key: 'wa', label: 'WhatsApp', val: 'Chat instantly · fast response', raw: COMPANY.phone.primary, href: `https://wa.me/${COMPANY.phone.whatsapp}`, ext: true, tint: '#25D366',
+      icon: (<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12c0 1.85.5 3.58 1.38 5.06L2 22l5.07-1.33A9.96 9.96 0 0 0 12 22c5.52 0 10-4.48 10-10S17.52 2 12 2Zm5.47 12.38c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.16-.17.2-.35.22-.64.08-.3-.15-1.26-.46-2.4-1.48-.88-.79-1.48-1.76-1.65-2.06-.17-.3-.02-.46.13-.6.13-.14.3-.35.44-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.08-.15-.67-1.61-.92-2.21-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48 0 1.46 1.06 2.88 1.21 3.07.15.2 2.1 3.2 5.08 4.49.71.31 1.26.49 1.69.62.71.23 1.36.2 1.87.12.57-.09 1.76-.72 2.01-1.41.25-.69.25-1.29.17-1.41-.07-.12-.27-.2-.57-.35Z" /></svg>) },
+    { key: 'mail', label: 'Email', val: COMPANY.email, raw: COMPANY.email, href: `mailto:${COMPANY.email}`, tint: '#e6a84f',
+      icon: (<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="4" width="20" height="16" rx="2" /><path d="m22 7-10 6L2 7" /></svg>) },
+  ];
+
+  const field = (name: keyof typeof form, label: string, type = 'text') => (
+    <div className="relative">
+      <input id={`lf-${name}`} name={name} type={type} value={form[name]} onChange={onChange} placeholder=" "
+        className={`peer w-full bg-white/[0.04] border rounded-xl px-4 pt-5 pb-2 font-inter text-sm text-white outline-none transition-colors ${errors[name] ? 'border-red-400/60' : 'border-white/12 focus:border-[#e6a84f]/55'}`} />
+      <label htmlFor={`lf-${name}`}
+        className="absolute left-4 top-3.5 font-inter text-white/40 text-sm transition-all duration-200 pointer-events-none peer-focus:top-1.5 peer-focus:text-[10px] peer-focus:text-[#e6a84f] peer-[:not(:placeholder-shown)]:top-1.5 peer-[:not(:placeholder-shown)]:text-[10px] peer-[:not(:placeholder-shown)]:text-white/50">{label}</label>
+    </div>
+  );
 
   return (
-    <section id="contact" className="py-24 bg-[#0d4f64]">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid lg:grid-cols-2 gap-14">
-          <FadeIn direction="left">
-            <p className="font-inter text-[#e6a84f] font-semibold text-sm uppercase tracking-widest mb-4">Get In Touch</p>
-            <h2 className="font-poppins text-4xl font-bold text-white mb-6">Need Reliable Staff in Tamil Nadu?</h2>
-            <p className="font-inter text-white/70 mb-10">Tell us your requirement — we respond within 24 hours with a tailored solution.</p>
-            <div className="space-y-5 mb-10">
-              {[
-                { icon: '📞', label: 'Call Us', val: COMPANY.phone.primary, href: `tel:${COMPANY.phone.primary.replace(/\s/g, '')}` },
-                { icon: '💬', label: 'WhatsApp', val: 'Chat instantly', href: `https://wa.me/${COMPANY.phone.whatsapp}` },
-                { icon: '✉️', label: 'Email', val: COMPANY.email, href: `mailto:${COMPANY.email}` },
-              ].map((c, i) => (
-                <a key={i} href={c.href} target={c.href.startsWith('http') ? '_blank' : undefined} rel="noopener noreferrer"
-                  className="flex items-center gap-4 group">
-                  <div className="w-11 h-11 bg-white/12 group-hover:bg-[#e6a84f] rounded-xl flex items-center justify-center text-xl transition-colors">{c.icon}</div>
-                  <div>
-                    <p className="font-inter text-white/55 text-xs">{c.label}</p>
-                    <p className="font-inter text-white font-medium text-sm">{c.val}</p>
-                  </div>
-                </a>
-              ))}
-            </div>
-            <div className="bg-white/8 border border-white/15 rounded-2xl p-6 space-y-4">
-              {[COMPANY.address.head, COMPANY.address.branch].map((a, i) => (
-                <div key={i}>
-                  <p className="font-poppins font-semibold text-white text-sm mb-1">{a.label}</p>
-                  <p className="font-inter text-white/60 text-sm leading-relaxed">{a.text}</p>
-                </div>
-              ))}
-            </div>
-          </FadeIn>
+    <section id="contact" className="relative bg-[#04090f] py-24 lg:py-32 overflow-hidden">
+      <AuroraBackground />
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid lg:grid-cols-2 gap-12 lg:gap-16">
 
-          <FadeIn direction="right" delay={0.15}>
-            <div className="bg-white rounded-3xl p-8 md:p-10 shadow-2xl">
-              <h3 className="font-poppins font-bold text-2xl text-[#1a2a3a] mb-2">Send Your Requirement</h3>
-              <p className="font-inter text-[#6b7c8d] text-sm mb-8">We respond within 24 hours. Your details are confidential.</p>
-              <form onSubmit={onSubmit} className="space-y-5">
-                <div className="grid sm:grid-cols-2 gap-5">
-                  <div>
-                    <label className="font-inter text-sm font-medium text-[#1a2a3a] mb-1.5 block">Full Name *</label>
-                    <input type="text" name="name" required value={form.name} onChange={onChange} placeholder="Your name" className={inputCls} />
-                  </div>
-                  <div>
-                    <label className="font-inter text-sm font-medium text-[#1a2a3a] mb-1.5 block">Company Name</label>
-                    <input type="text" name="company" value={form.company} onChange={onChange} placeholder="Your company" className={inputCls} />
-                  </div>
-                </div>
-                <div className="grid sm:grid-cols-2 gap-5">
-                  <div>
-                    <label className="font-inter text-sm font-medium text-[#1a2a3a] mb-1.5 block">Phone Number *</label>
-                    <input type="tel" name="phone" required value={form.phone} onChange={onChange} placeholder="+91 98765 43210" className={inputCls} />
-                  </div>
-                  <div>
-                    <label className="font-inter text-sm font-medium text-[#1a2a3a] mb-1.5 block">Industry</label>
-                    <select name="industry" value={form.industry} onChange={onChange} className={inputCls}>
-                      <option value="">Select industry</option>
-                      {INDUSTRIES.map(i => <option key={i.name}>{i.name}</option>)}
-                    </select>
-                  </div>
-                </div>
-                <div>
-                  <label className="font-inter text-sm font-medium text-[#1a2a3a] mb-1.5 block">Your Requirement</label>
-                  <textarea name="message" rows={4} value={form.message} onChange={onChange}
-                    placeholder="Describe your staffing requirement — number of staff, type, location, duration..."
-                    className={`${inputCls} resize-none`} />
-                </div>
-                <motion.button whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.99 }} type="submit"
-                  className="w-full bg-[#e6a84f] hover:bg-[#c8902e] text-[#0e1f2f] font-poppins font-bold py-4 rounded-xl transition-all shadow-md">
-                  Submit Requirement →
-                </motion.button>
-                <p className="font-inter text-[#6b7c8d] text-xs text-center">We do not share your information. 100% confidential.</p>
-              </form>
+          {/* LEFT — info */}
+          <motion.div initial={{ opacity: 0, y: 26 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: '-60px' }} transition={{ duration: 0.7, ease: easeExpo }}>
+            <div className="inline-flex items-center gap-2.5 mb-6">
+              <span className="w-8 h-px bg-[#e6a84f]" />
+              <span className="font-inter text-[#f0be6a] text-[11px] tracking-[0.4em] uppercase">Get In Touch</span>
             </div>
-          </FadeIn>
+            <h2 className="font-poppins font-extrabold text-white text-4xl lg:text-5xl leading-[1.05] tracking-[-0.02em]">
+              Need reliable staff in
+              <span className="font-fraunces italic font-medium bg-gradient-to-r from-[#f7d99a] to-[#c8902e] bg-clip-text text-transparent"> Tamil Nadu?</span>
+            </h2>
+            <p className="font-inter text-white/60 text-base lg:text-lg leading-relaxed mt-5 max-w-md">
+              Tell us your requirement — we respond within 24 hours with a tailored solution.
+            </p>
+
+            <div className="space-y-3 mt-9">
+              {contacts.map((c) => <ContactCard key={c.key} c={c} />)}
+            </div>
+
+            <div className="mt-5 bg-white/[0.03] border border-white/[0.08] rounded-2xl p-5 space-y-4">
+              {[COMPANY.address.head, COMPANY.address.branch].map((a, i) => (
+                <div key={i} className="flex gap-3">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" className="text-[#e6a84f] flex-shrink-0 mt-0.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0Z" /><circle cx="12" cy="10" r="3" /></svg>
+                  <div>
+                    <p className="font-poppins font-semibold text-white/85 text-xs uppercase tracking-wide mb-1">{a.label}</p>
+                    <p className="font-inter text-white/50 text-[13px] leading-relaxed">{a.text}</p>
+                  </div>
+                </div>
+              ))}
+              <div className="rounded-xl overflow-hidden border border-white/10 h-44 mt-1">
+                <iframe title="Sai Saktheeswari Head Office — Cuddalore"
+                  src="https://maps.google.com/maps?q=S.N%20Chavadi%2C%20Cuddalore%20607006&z=14&output=embed"
+                  loading="lazy" referrerPolicy="no-referrer-when-downgrade" className="w-full h-full grayscale-[0.25] opacity-95" />
+              </div>
+            </div>
+          </motion.div>
+
+          {/* RIGHT — glass form */}
+          <motion.div initial={{ opacity: 0, y: 26 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: '-60px' }} transition={{ duration: 0.7, delay: 0.1, ease: easeExpo }}
+            className="relative">
+            <div className="relative rounded-3xl p-7 sm:p-9 bg-gradient-to-br from-[#0c1822]/90 to-[#070e16]/90 backdrop-blur-2xl border border-white/[0.08] shadow-[0_30px_70px_rgba(0,0,0,0.55)]">
+              {sent ? (
+                <div className="text-center py-10">
+                  <motion.div initial={{ scale: 0.6, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ duration: 0.5, ease: easeExpo }}
+                    className="w-16 h-16 rounded-2xl bg-[#e6a84f]/15 border border-[#e6a84f]/30 text-[#e6a84f] flex items-center justify-center mx-auto mb-6">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M4 12.5l5 5L20 6" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                  </motion.div>
+                  <h3 className="font-poppins font-bold text-white text-2xl mb-2">Thank you, {form.name.split(' ')[0] || 'there'}.</h3>
+                  <p className="font-inter text-white/55 text-sm max-w-sm mx-auto mb-7">Choose how to send your requirement — we respond within 24 hours.</p>
+                  <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                    <a href={mailtoHref()} className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-[#f0be6a] to-[#c8902e] text-[#0a1a24] font-poppins font-bold text-sm px-6 py-3 rounded-xl">Send via Email</a>
+                    <a href={waHref()} target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center gap-2 bg-white/[0.06] hover:bg-white/[0.12] border border-white/15 text-white font-poppins font-semibold text-sm px-6 py-3 rounded-xl transition-colors">Send via WhatsApp</a>
+                  </div>
+                </div>
+              ) : (
+                <form onSubmit={onSubmit} noValidate>
+                  <h3 className="font-poppins font-bold text-white text-2xl mb-1.5">Send your requirement</h3>
+                  <p className="font-inter text-white/45 text-sm mb-7">We respond within 24 hours · 100% confidential.</p>
+                  <div className="space-y-4">
+                    <div className="grid sm:grid-cols-2 gap-4">
+                      <div>{field('name', 'Full name *')}{errors.name && <p className="text-red-400/80 text-xs mt-1">Please enter your name.</p>}</div>
+                      {field('company', 'Company')}
+                    </div>
+                    <div className="grid sm:grid-cols-2 gap-4">
+                      <div>{field('phone', 'Phone *', 'tel')}{errors.phone && <p className="text-red-400/80 text-xs mt-1">Enter a valid phone.</p>}</div>
+                      <div className="relative">
+                        <select id="lf-industry" name="industry" value={form.industry} onChange={onChange}
+                          className="peer w-full bg-white/[0.04] border border-white/12 focus:border-[#e6a84f]/55 rounded-xl px-4 pt-5 pb-2 font-inter text-sm text-white outline-none appearance-none cursor-pointer transition-colors">
+                          <option value="" className="bg-[#0a1422]"> </option>
+                          {INDUSTRIES.map(i => <option key={i.name} className="bg-[#0a1422]">{i.name}</option>)}
+                        </select>
+                        <label htmlFor="lf-industry" className={`absolute left-4 font-inter pointer-events-none transition-all duration-200 ${form.industry ? 'top-1.5 text-[10px] text-white/50' : 'top-3.5 text-sm text-white/40'}`}>Industry</label>
+                      </div>
+                    </div>
+                    <div className="relative">
+                      <textarea id="lf-message" name="message" rows={4} value={form.message} onChange={onChange} placeholder=" "
+                        className="peer w-full bg-white/[0.04] border border-white/12 focus:border-[#e6a84f]/55 rounded-xl px-4 pt-5 pb-2 font-inter text-sm text-white outline-none resize-none transition-colors" />
+                      <label htmlFor="lf-message" className="absolute left-4 top-3.5 font-inter text-white/40 text-sm transition-all duration-200 pointer-events-none peer-focus:top-1.5 peer-focus:text-[10px] peer-focus:text-[#e6a84f] peer-[:not(:placeholder-shown)]:top-1.5 peer-[:not(:placeholder-shown)]:text-[10px] peer-[:not(:placeholder-shown)]:text-white/50">Your requirement — staff count, type, location, duration</label>
+                    </div>
+                  </div>
+                  <button type="submit"
+                    className="group relative overflow-hidden w-full mt-7 inline-flex items-center justify-center gap-2.5 bg-gradient-to-br from-[#f0be6a] via-[#e6a84f] to-[#c8902e] text-[#0a1a24] font-poppins font-bold text-sm px-7 py-3.5 rounded-xl shadow-[0_8px_30px_rgba(230,168,79,0.32)] hover:shadow-[0_12px_44px_rgba(230,168,79,0.5)] hover:-translate-y-0.5 transition-all duration-300">
+                    <span className="relative z-10">Submit Requirement</span>
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" className="relative z-10 transition-transform duration-300 group-hover:translate-x-1"><path d="M2 7h9.5M7.5 3l4 4-4 4" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                    <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
+                  </button>
+                </form>
+              )}
+            </div>
+          </motion.div>
         </div>
       </div>
     </section>
   );
 }
 
-/* ─── FAQ ─── */
+/* ─── FAQ — premium dark glass accordion ─── */
 function FAQSection() {
-  const [open, setOpen] = useState<number | null>(null);
+  const [open, setOpen] = useState<number | null>(0);
   return (
-    <section className="py-24 bg-[#f8f9fa]">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <FadeIn className="text-center mb-16">
-          <p className="font-inter text-[#e6a84f] font-semibold text-sm uppercase tracking-widest mb-3">FAQ</p>
-          <h2 className="font-poppins text-4xl font-bold text-[#0d4f64] mb-4">Frequently Asked Questions</h2>
-          <p className="font-inter text-[#6b7c8d]">Everything you need to know about working with Sai Saktheeswari.</p>
-        </FadeIn>
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-          {FAQS.map((faq, i) => (
-            <div key={i} className="border-b border-gray-100 last:border-0">
-              <button onClick={() => setOpen(open === i ? null : i)}
-                className="w-full text-left py-5 px-6 flex justify-between items-start gap-4 hover:bg-[#e8f4f8]/40 transition-colors">
-                <span className="font-poppins font-semibold text-[#1a2a3a] text-base">{faq.q}</span>
-                <motion.span animate={{ rotate: open === i ? 45 : 0 }}
-                  className="text-[#0d4f64] text-xl font-bold flex-shrink-0">+</motion.span>
-              </button>
-              <AnimatePresence>
-                {open === i && (
-                  <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.25 }} className="overflow-hidden">
-                    <p className="px-6 pb-5 font-inter text-[#6b7c8d] leading-relaxed">{faq.a}</p>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-          ))}
+    <section className="relative bg-[#050d1a] py-24 lg:py-32 overflow-hidden border-t border-white/[0.05]">
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_55%_45%_at_50%_0%,rgba(230,168,79,0.06),transparent)] pointer-events-none" />
+      <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'radial-gradient(#e6a84f 1px, transparent 1px)', backgroundSize: '34px 34px' }} />
+
+      <div className="relative z-10 max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+        <motion.div initial={{ opacity: 0, y: 22 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.7, ease: easeExpo }}
+          className="text-center mb-14 lg:mb-16">
+          <div className="inline-flex items-center gap-2.5 mb-6">
+            <span className="w-8 h-px bg-[#e6a84f]" />
+            <span className="font-inter text-[#f0be6a] text-[11px] tracking-[0.4em] uppercase">FAQ</span>
+            <span className="w-8 h-px bg-[#e6a84f]" />
+          </div>
+          <h2 className="font-poppins font-extrabold text-white text-4xl lg:text-5xl leading-[1.05]">
+            Frequently asked
+            <span className="block font-fraunces italic font-medium bg-gradient-to-r from-[#f7d99a] to-[#c8902e] bg-clip-text text-transparent mt-1">questions.</span>
+          </h2>
+          <p className="font-inter text-white/55 text-base lg:text-lg mt-5">Everything you need to know about working with Sai Saktheeswari.</p>
+        </motion.div>
+
+        <div className="space-y-3">
+          {FAQS.map((faq, i) => {
+            const isOpen = open === i;
+            return (
+              <motion.div key={i}
+                initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: '-30px' }} transition={{ duration: 0.5, delay: i * 0.05, ease: easeExpo }}
+                className={`rounded-2xl border transition-colors duration-300 overflow-hidden ${isOpen ? 'bg-white/[0.05] border-[#e6a84f]/25' : 'bg-white/[0.025] border-white/[0.07] hover:border-white/[0.14]'}`}>
+                <button onClick={() => setOpen(isOpen ? null : i)} aria-expanded={isOpen}
+                  className="w-full text-left py-5 px-5 sm:px-6 flex justify-between items-center gap-4">
+                  <span className={`font-poppins font-semibold text-[15px] sm:text-base transition-colors ${isOpen ? 'text-white' : 'text-white/80'}`}>{faq.q}</span>
+                  <motion.span animate={{ rotate: isOpen ? 135 : 0 }} transition={{ duration: 0.3, ease: easeExpo }}
+                    className={`flex-shrink-0 w-7 h-7 rounded-full border flex items-center justify-center text-lg leading-none ${isOpen ? 'border-[#e6a84f]/50 text-[#e6a84f]' : 'border-white/15 text-white/50'}`}>+</motion.span>
+                </button>
+                <AnimatePresence initial={false}>
+                  {isOpen && (
+                    <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.32, ease: easeExpo }} className="overflow-hidden">
+                      <p className="px-5 sm:px-6 pb-5 font-inter text-white/55 text-sm leading-relaxed">{faq.a}</p>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </motion.div>
+            );
+          })}
         </div>
-        <FadeIn className="text-center mt-10">
+
+        <motion.div initial={{ opacity: 0, y: 14 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6, ease: easeExpo }}
+          className="text-center mt-12">
+          <p className="font-inter text-white/45 text-sm mb-4">Still have a question?</p>
           <a href={`https://wa.me/${COMPANY.phone.whatsapp}`} target="_blank" rel="noopener noreferrer"
-            className="bg-[#e6a84f] hover:bg-[#c8902e] text-[#0e1f2f] font-poppins font-semibold px-8 py-3 rounded-xl transition-all inline-flex items-center gap-2">
-            💬 Ask on WhatsApp
+            className="group inline-flex items-center justify-center gap-2.5 bg-white/[0.06] hover:bg-white/[0.12] border border-white/15 hover:border-[#e6a84f]/40 text-white font-poppins font-semibold text-sm px-7 py-3.5 rounded-xl transition-all duration-300">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" className="text-[#25D366]"><path d="M12 2C6.48 2 2 6.48 2 12c0 1.85.5 3.58 1.38 5.06L2 22l5.07-1.33A9.96 9.96 0 0 0 12 22c5.52 0 10-4.48 10-10S17.52 2 12 2Zm5.47 12.38c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.16-.17.2-.35.22-.64.08-.3-.15-1.26-.46-2.4-1.48-.88-.79-1.48-1.76-1.65-2.06-.17-.3-.02-.46.13-.6.13-.14.3-.35.44-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.08-.15-.67-1.61-.92-2.21-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48 0 1.46 1.06 2.88 1.21 3.07.15.2 2.1 3.2 5.08 4.49.71.31 1.26.49 1.69.62.71.23 1.36.2 1.87.12.57-.09 1.76-.72 2.01-1.41.25-.69.25-1.29.17-1.41-.07-.12-.27-.2-.57-.35Z" /></svg>
+            Ask on WhatsApp
           </a>
-        </FadeIn>
+        </motion.div>
       </div>
     </section>
   );
@@ -1804,12 +2178,14 @@ export default function Home() {
           { imgUrl: '/images/training-carousel/campus-deployment.jpg', alt: 'Ceremonial guards at campus' },
           { imgUrl: '/images/training-carousel/ceremonial-guard.jpg', alt: 'Guard at ceremonial post' },
           { imgUrl: '/images/home/guards-march.jpg', alt: 'Guards marching in formation' },
-          { imgUrl: '/images/training-carousel/bolero-ceremony.jpg', alt: 'Deployment ceremony' },
           { imgUrl: '/images/home/badge-uniform.jpg', alt: 'Sai Saktheeswari uniform badge' },
           { imgUrl: '/images/training-carousel/team-formation.jpg', alt: 'Team in formation' },
           { imgUrl: '/images/training-carousel/patrol-duty.jpg', alt: 'Guards on patrol duty' },
         ]} />
       </section>
+
+      {/* Full workforce gallery — every real photo, web-optimized marquee */}
+      <GalleryMarquee />
 
     </div>
   );
