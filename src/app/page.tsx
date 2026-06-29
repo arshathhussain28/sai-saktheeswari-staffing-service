@@ -1027,7 +1027,7 @@ const SERVICE_VISUALS: Record<string, { img: string; Icon: () => React.ReactElem
   security: { img: '/images/dsc/campus-deployment-2.jpg', Icon: IconShield },
   labour: { img: '/images/dsc/team-group-1.jpg', Icon: IconWorkforce },
   contract: { img: '/images/dsc/supervisors-duo.jpg', Icon: IconContract },
-  compliance: { img: '/images/dsc/campus-patrol-1.jpg', Icon: IconCompliance },
+  compliance: { img: '/images/dsc/director-office.jpg', Icon: IconCompliance },
 };
 
 function ServiceCard({ service, index }: { service: typeof SERVICES[0]; index: number }) {
