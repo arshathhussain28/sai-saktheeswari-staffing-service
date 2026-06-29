@@ -29,7 +29,7 @@ function ScrollReveal({ children, className }: { children: React.ReactNode; clas
 /* ─── HERO ─── */
 const HERO_SLIDES = [
   { src: '/images/dsc/formation-aerial.jpg', label: 'Guard team in disciplined formation' },
-  { src: '/images/dsc/campus-patrol-1.jpg', label: 'Ceremonial guard of honour' },
+  { src: '/images/dsc/ceremonial-portrait.jpg', label: 'Ceremonial guard of honour' },
   { src: '/images/home/arm-badge-patch.jpg', label: 'Sai Saktheeswari — Since 1991' },
   { src: '/images/home/guards-march.jpg', label: 'Guards in professional formation' },
   { src: '/images/home/badge-uniform.jpg', label: 'Uniform & branding standards' },
