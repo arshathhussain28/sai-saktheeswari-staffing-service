@@ -18,7 +18,7 @@ export default function GalleryMarquee() {
 
       {/* header */}
       <motion.div
-        initial={{ opacity: 0, y: 22 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.7, ease: easeExpo }}
+        initial={{ opacity: 0, y: 22 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: false }} transition={{ duration: 0.7, ease: easeExpo }}
         className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center mb-14 lg:mb-16">
         <div className="inline-flex items-center gap-2.5 mb-6">
           <span className="w-8 h-px bg-[#e6a84f]" />

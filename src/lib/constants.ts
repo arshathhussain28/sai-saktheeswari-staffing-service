@@ -1,5 +1,5 @@
 export const COMPANY = {
-  name: 'Sai Saktheeswari Staffing Services',
+  name: 'Sai Saktheeswari Security & Staffing Services',
   shortName: 'Sai Saktheeswari',
   tagline: 'Sourcing Our Staffs for Shaping Your Success',
   established: 1991,

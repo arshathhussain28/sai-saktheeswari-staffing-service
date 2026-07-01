@@ -4,11 +4,11 @@ import { useEffect, useRef, useState } from 'react';
 
 export function AnimatedCounter({ value, suffix = '', duration = 2 }: { value: number; suffix?: string; duration?: number }) {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true });
+  const isInView = useInView(ref, { once: false });
   const [display, setDisplay] = useState(0);
 
   useEffect(() => {
-    if (!isInView) return;
+    if (!isInView) { setDisplay(0); return; }
     const controls = animate(0, value, {
       duration,
       ease: 'easeOut',

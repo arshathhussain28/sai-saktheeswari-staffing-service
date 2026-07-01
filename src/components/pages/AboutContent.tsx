@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { motion, useInView } from 'framer-motion';
+import { motion, useInView, useScroll } from 'framer-motion';
 import { COMPANY } from '@/lib/constants';
 
 const ease = [0.25, 0.4, 0.25, 1] as [number, number, number, number];
@@ -11,7 +11,7 @@ function Reveal({ children, className = '', delay = 0 }: { children: React.React
     <motion.div
       initial={{ opacity: 0, y: 26 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: '-80px' }}
+      viewport={{ once: false, margin: '-80px' }}
       transition={{ duration: 0.6, ease, delay }}
       className={className}
     >
@@ -22,10 +22,10 @@ function Reveal({ children, className = '', delay = 0 }: { children: React.React
 
 function Counter({ to, suffix = '' }: { to: number; suffix?: string }) {
   const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: '-40px' });
+  const inView = useInView(ref, { once: false, margin: '-40px' });
   const [n, setN] = useState(0);
   useEffect(() => {
-    if (!inView) return;
+    if (!inView) { setN(0); return; }
     let raf = 0;
     const start = performance.now();
     const dur = 1600;
@@ -44,7 +44,7 @@ const MILESTONES = [
   {
     year: '1991',
     title: 'The Foundation',
-    text: 'Rajasekar founded Sai Saktheeswari Staffing Services in Cuddalore with one conviction — that South Indian businesses deserved dependable, disciplined manpower they could genuinely trust. Starting with a focused team of trained security personnel, the foundation of every standard we hold today was laid in this year.',
+    text: 'Sai Saktheeswari Security & Staffing Services was founded in Cuddalore with one conviction — that South Indian businesses deserved dependable, disciplined manpower they could genuinely trust. Starting with a focused team of trained security personnel, the foundation of every standard we hold today was laid in this year.',
   },
   {
     year: '2000s',
@@ -102,6 +102,49 @@ const REGISTRATIONS = [
   { label: 'Licensed & Registered', sub: 'Government-licensed staffing agency' },
   { label: 'Shops & Establishment Act', sub: 'Both Cuddalore & Puducherry offices registered' },
 ];
+
+/* ── Journey timeline — alternating zig-zag on desktop, premium editorial cards on mobile ── */
+function MilestoneTimeline() {
+  const trackRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({ target: trackRef, offset: ['start 78%', 'end 65%'] });
+
+  return (
+    <div ref={trackRef} className="relative">
+      <div className="absolute left-[19px] sm:left-1/2 top-2 bottom-2 w-px bg-white/[0.06] sm:-translate-x-px" />
+      <motion.div
+        style={{ scaleY: scrollYProgress, transformOrigin: 'top' }}
+        className="absolute left-[19px] sm:left-1/2 top-2 bottom-2 w-px bg-gradient-to-b from-[#e6a84f] via-[#e6a84f]/50 to-[#e6a84f]/10 sm:-translate-x-px"
+      />
+      <div className="space-y-6 sm:space-y-10">
+        {MILESTONES.map((m, i) => (
+          <Reveal key={m.year} delay={i * 0.05}>
+            <div className={`relative flex items-start gap-6 sm:gap-0 ${i % 2 === 0 ? 'sm:flex-row' : 'sm:flex-row-reverse'}`}>
+              <div className="hidden sm:block sm:w-1/2" />
+              <div className="absolute left-[12px] sm:left-1/2 top-6 sm:top-1.5 w-3.5 h-3.5 rounded-full bg-[#e6a84f] ring-4 ring-[#04090f] sm:-translate-x-1/2 shadow-[0_0_16px_rgba(230,168,79,0.6)] z-10" />
+              <div className={`pl-12 sm:pl-0 sm:w-1/2 ${i % 2 === 0 ? 'sm:pl-12' : 'sm:pr-12 sm:text-right'}`}>
+                <div
+                  className="relative overflow-hidden rounded-2xl border border-white/[0.07] bg-white/[0.03] backdrop-blur-md p-6
+                    active:scale-[0.98] transition-transform duration-200
+                    sm:rounded-none sm:border-0 sm:bg-transparent sm:backdrop-blur-none sm:p-0 sm:active:scale-100"
+                >
+                  <span
+                    aria-hidden
+                    className="sm:hidden pointer-events-none select-none absolute -top-4 -right-2 font-poppins font-extrabold text-white/[0.05] text-[86px] leading-none"
+                  >
+                    0{i + 1}
+                  </span>
+                  <p className="relative font-fraunces italic text-[#e6a84f] text-2xl lg:text-3xl mb-1">{m.year}</p>
+                  <p className="relative font-poppins font-bold text-white text-lg mb-2">{m.title}</p>
+                  <p className="relative font-inter text-white/55 text-sm leading-relaxed">{m.text}</p>
+                </div>
+              </div>
+            </div>
+          </Reveal>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 function ArrowIcon() {
   return (
@@ -171,45 +214,44 @@ export default function AboutContent() {
         </div>
       </section>
 
-      {/* ── FOUNDER SECTION ── */}
+      {/* ── OUR LEGACY ── */}
       <section className="bg-[#04090f] py-20 lg:py-28">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col lg:flex-row gap-12 lg:gap-20 items-center">
 
-            {/* Founder photo */}
+            {/* Legacy image */}
             <Reveal className="w-full lg:w-[40%]">
               <div className="relative rounded-3xl overflow-hidden ring-1 ring-[#e6a84f]/20 shadow-[0_30px_80px_rgba(0,0,0,0.55),0_0_0_1px_rgba(230,168,79,0.08)]">
                 <img
-                  src="/images/dsc/team-campus.jpg"
-                  alt="Rajasekar — Founder, Sai Saktheeswari Staffing Services"
+                  src="/images/dsc/team-group-1.jpg"
+                  alt="Sai Saktheeswari Security & Staffing Services — deployed workforce team"
                   className="w-full aspect-[4/5] object-cover object-top"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#04090f]/90 via-[#04090f]/20 to-transparent" />
                 <div className="absolute bottom-0 left-0 right-0 p-6 border-t border-[#e6a84f]/15">
-                  <p className="font-poppins font-bold text-white text-lg">Rajasekar</p>
-                  <p className="font-inter text-[#e6a84f] text-xs tracking-[0.2em] uppercase mt-0.5">Founder & Managing Director</p>
-                  <p className="font-inter text-white/45 text-xs mt-1">Sai Saktheeswari Staffing Services · Est. 1991</p>
+                  <p className="font-poppins font-bold text-white text-lg">Sai Saktheeswari Security &amp; Staffing Services</p>
+                  <p className="font-inter text-[#e6a84f] text-xs tracking-[0.2em] uppercase mt-0.5">Est. 1991 · Cuddalore</p>
                 </div>
               </div>
             </Reveal>
 
-            {/* Founder story */}
+            {/* Legacy story */}
             <div className="w-full lg:w-[60%]">
               <Reveal>
-                <p className="font-inter text-[#e6a84f] text-[11px] font-bold tracking-[0.3em] uppercase mb-4">The Founder&apos;s Vision</p>
+                <p className="font-inter text-[#e6a84f] text-[11px] font-bold tracking-[0.3em] uppercase mb-4">Our Legacy</p>
                 <h2 className="font-poppins font-extrabold text-white text-3xl lg:text-4xl leading-tight mb-6">
-                  One man&apos;s conviction.<br />
+                  One conviction.<br />
                   <span className="font-fraunces italic font-medium text-[#e6a84f]">Three decades of delivery.</span>
                 </h2>
               </Reveal>
               <Reveal delay={0.07}>
                 <p className="font-inter text-white/60 text-base leading-relaxed mb-5">
-                  In 1991, Rajasekar founded Sai Saktheeswari Staffing Services in Cuddalore with a simple but powerful belief: businesses across South India deserved workforce partners who were truly accountable — not just suppliers, but guarantors of quality.
+                  Founded in Cuddalore in 1991, Sai Saktheeswari Security & Staffing Services was built on a simple but powerful belief: businesses across South India deserved workforce partners who were truly accountable — not just suppliers, but guarantors of quality.
                 </p>
               </Reveal>
               <Reveal delay={0.12}>
                 <p className="font-inter text-white/55 text-base leading-relaxed mb-7">
-                  Starting with trained security personnel and a personal commitment to every client, Rajasekar built the company on direct accountability. Every deployment was — and still is — a reflection of the Sai Saktheeswari standard he established from day one.
+                  Starting with trained security personnel and a company-wide commitment to every client, we built our standards on direct accountability. Every deployment was — and still is — a reflection of the Sai Saktheeswari standard established from day one.
                 </p>
               </Reveal>
               <Reveal delay={0.17}>
@@ -217,7 +259,7 @@ export default function AboutContent() {
                   <p className="font-fraunces italic text-white/80 text-lg lg:text-xl leading-relaxed">
                     &ldquo;We don&apos;t just supply people. We stand behind every one of them.&rdquo;
                   </p>
-                  <p className="font-inter text-[#e6a84f]/70 text-xs tracking-[0.15em] uppercase mt-3">— Rajasekar, Founder</p>
+                  <p className="font-inter text-[#e6a84f]/70 text-xs tracking-[0.15em] uppercase mt-3">— Sai Saktheeswari Security &amp; Staffing Services</p>
                 </blockquote>
               </Reveal>
 
@@ -283,14 +325,14 @@ export default function AboutContent() {
               </Reveal>
               <Reveal delay={0.12}>
                 <p className="font-inter text-white/55 text-base leading-relaxed mb-8">
-                  Our brand identity is simple: verified people, trained before deployment, managed throughout — delivered with full statutory compliance and personal accountability from our founder down. That&apos;s the Sai Saktheeswari promise.
+                  Our brand identity is simple: verified people, trained before deployment, managed throughout — delivered with full statutory compliance and accountability at every level of the company. That&apos;s the Sai Saktheeswari promise.
                 </p>
               </Reveal>
 
               {/* Differentiators */}
               <div className="space-y-3.5">
                 {[
-                  { title: 'Single-owner accountability', desc: 'Rajasekar personally oversees standards — no franchise, no middlemen, no excuses.' },
+                  { title: 'Direct accountability', desc: 'Standards are overseen in-house at every site — no franchise, no middlemen, no excuses.' },
                   { title: '48–72 hour deployment', desc: 'Standard deployment turnaround. Same-day WhatsApp response for urgent needs.' },
                   { title: 'In-house compliance team', desc: 'PF, ESI, Bonus Act and Contract Labour Act managed entirely by us — never outsourced.' },
                   { title: 'Trained, not just recruited', desc: 'Structured training in discipline, safety, communication and conduct before every placement.' },
@@ -320,24 +362,7 @@ export default function AboutContent() {
             <p className="font-inter text-[#e6a84f] text-[11px] font-bold tracking-[0.3em] uppercase mb-3">The Journey</p>
             <h2 className="font-poppins font-extrabold text-white text-3xl lg:text-5xl">Three decades, four chapters.</h2>
           </Reveal>
-          <div className="relative">
-            <div className="absolute left-[19px] sm:left-1/2 top-2 bottom-2 w-px bg-gradient-to-b from-[#e6a84f]/40 via-[#e6a84f]/15 to-transparent sm:-translate-x-px" />
-            <div className="space-y-10">
-              {MILESTONES.map((m, i) => (
-                <Reveal key={m.year} delay={i * 0.05}>
-                  <div className={`relative flex items-start gap-6 sm:gap-0 ${i % 2 === 0 ? 'sm:flex-row' : 'sm:flex-row-reverse'}`}>
-                    <div className="hidden sm:block sm:w-1/2" />
-                    <div className="absolute left-[12px] sm:left-1/2 top-1.5 w-3.5 h-3.5 rounded-full bg-[#e6a84f] ring-4 ring-[#04090f] sm:-translate-x-1/2 shadow-[0_0_16px_rgba(230,168,79,0.6)]" />
-                    <div className={`pl-12 sm:pl-0 sm:w-1/2 ${i % 2 === 0 ? 'sm:pl-12' : 'sm:pr-12 sm:text-right'}`}>
-                      <p className="font-fraunces italic text-[#e6a84f] text-2xl lg:text-3xl mb-1">{m.year}</p>
-                      <p className="font-poppins font-bold text-white text-lg mb-2">{m.title}</p>
-                      <p className="font-inter text-white/55 text-sm leading-relaxed">{m.text}</p>
-                    </div>
-                  </div>
-                </Reveal>
-              ))}
-            </div>
-          </div>
+          <MilestoneTimeline />
         </div>
       </section>
 

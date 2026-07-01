@@ -1,19 +1,23 @@
 'use client';
 
+import { useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { COMPANY, SERVICES } from '@/lib/constants';
 
 const ease = [0.25, 0.4, 0.25, 1] as [number, number, number, number];
 
-/* ── Per-service enrichment (SVG icon + image + factual points) ── */
+/* ── Per-service enrichment (SVG icon + real photography + factual points) ── */
 const DETAIL: Record<
   string,
-  { num: string; img: string; imgAlt: string; points: string[]; Icon: () => React.ReactElement }
+  { num: string; img: string; imgAlt: string; caption: string; points: string[]; Icon: () => React.ReactElement }
 > = {
   security: {
     num: '01',
-    img: '/images/dsc/guard-lineup-1.jpg',
-    imgAlt: 'Sai Saktheeswari uniformed security guards in branded formation',
+    img: '/images/services/security-personnel.webp',
+    imgAlt: 'Sai Saktheeswari uniformed security guards in branded formation on corporate premises',
+    caption: 'On-site formation · Cuddalore campus',
     points: [
       'Corporate campuses, factories, hospitals & events',
       'Trained, uniformed & disciplined personnel',
@@ -29,8 +33,9 @@ const DETAIL: Record<
   },
   labour: {
     num: '02',
-    img: '/images/dsc/team-outdoor-1.jpg',
-    imgAlt: 'Sai Saktheeswari deployed workforce team outdoors',
+    img: '/images/services/labour-outsourcing.webp',
+    imgAlt: 'Sai Saktheeswari verified labour workforce deployed at a client facility',
+    caption: 'Workforce deployment · client facility',
     points: [
       'Manufacturing, construction & logistics',
       'Background-verified manpower',
@@ -48,8 +53,9 @@ const DETAIL: Record<
   },
   contract: {
     num: '03',
-    img: '/images/dsc/team-group-1.jpg',
-    imgAlt: 'Sai Saktheeswari managed contract workforce group',
+    img: '/images/services/contract-workforce.webp',
+    imgAlt: 'Sai Saktheeswari managed contract workforce in disciplined large-scale formation',
+    caption: 'Managed workforce, full scale',
     points: [
       'SLA-backed long-term contracts',
       'Attendance & payroll fully managed',
@@ -66,8 +72,9 @@ const DETAIL: Record<
   },
   compliance: {
     num: '04',
-    img: '/images/dsc/campus-patrol-1.jpg',
-    imgAlt: 'Sai Saktheeswari workforce operating under full statutory HR compliance',
+    img: '/images/services/statutory-compliance.webp',
+    imgAlt: 'Sai Saktheeswari administrative staff managing statutory compliance documentation at the head office',
+    caption: 'Administration desk · head office',
     points: [
       'Provident Fund (PF) & ESI handled',
       'Bonus Act & Contract Labour Act',
@@ -85,12 +92,69 @@ const DETAIL: Record<
   },
 };
 
+/* ── GSAP scroll parallax image (matches Training section pattern) ── */
+function ParallaxImage({ src, alt, className = '', intensity = 10 }: { src: string; alt: string; className?: string; intensity?: number }) {
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const imgRef = useRef<HTMLImageElement>(null);
+
+  useEffect(() => {
+    if (!wrapRef.current || !imgRef.current) return;
+    gsap.registerPlugin(ScrollTrigger);
+    const ctx = gsap.context(() => {
+      gsap.fromTo(
+        imgRef.current,
+        { yPercent: -intensity },
+        {
+          yPercent: intensity,
+          ease: 'none',
+          scrollTrigger: { trigger: wrapRef.current, start: 'top bottom', end: 'bottom top', scrub: 0.6, invalidateOnRefresh: true },
+        }
+      );
+    }, wrapRef);
+    return () => ctx.revert();
+  }, [intensity]);
+
+  return (
+    <div ref={wrapRef} className={`relative overflow-hidden ${className}`}>
+      <img ref={imgRef} src={src} alt={alt} loading="lazy" className="absolute inset-0 left-0 w-full h-[128%] -top-[14%] object-cover" />
+    </div>
+  );
+}
+
+/* ── GSAP scroll-triggered numeral reveal — premium editorial weight ── */
+function BigNumeral({ num }: { num: string }) {
+  const ref = useRef<HTMLSpanElement>(null);
+
+  useEffect(() => {
+    if (!ref.current) return;
+    gsap.registerPlugin(ScrollTrigger);
+    const ctx = gsap.context(() => {
+      gsap.fromTo(
+        ref.current,
+        { opacity: 0, y: 36, scale: 0.88 },
+        {
+          opacity: 1, y: 0, scale: 1,
+          duration: 1.1, ease: 'power4.out',
+          scrollTrigger: { trigger: ref.current, start: 'top 85%', toggleActions: 'play reverse play reverse', invalidateOnRefresh: true },
+        }
+      );
+    });
+    return () => ctx.revert();
+  }, []);
+
+  return (
+    <span ref={ref} className="relative inline-block font-fraunces italic font-semibold bg-gradient-to-br from-[#f0be6a] via-[#e6a84f] to-[#c8902e] bg-clip-text text-transparent text-[5.5rem] lg:text-[7.5rem] leading-none tracking-tight">
+      {num}
+    </span>
+  );
+}
+
 function Reveal({ children, className = '', delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 26 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: '-80px' }}
+      viewport={{ once: false, margin: '-80px' }}
       transition={{ duration: 0.6, ease, delay }}
       className={className}
     >
@@ -161,39 +225,64 @@ export default function ServicesContent() {
         </div>
       </section>
 
-      {/* ── SERVICE DETAIL ROWS ── */}
+      {/* ── SERVICE DETAIL ROWS — premium editorial composition ── */}
       <div className="bg-[#050d1a]">
         {SERVICES.map((s, i) => {
           const d = DETAIL[s.id];
           const flip = i % 2 === 1;
           return (
-            <section key={s.id} id={s.id} className="scroll-mt-24 border-t border-white/[0.05]">
-              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-28">
-                <div className={`flex flex-col ${flip ? 'lg:flex-row-reverse' : 'lg:flex-row'} gap-12 lg:gap-20 items-center`}>
-                  {/* Image */}
+            <section key={s.id} id={s.id} className="relative scroll-mt-24 border-t border-white/[0.05] overflow-hidden">
+              {/* low-opacity background watermark numeral for depth */}
+              <span
+                aria-hidden
+                className={`absolute top-1/2 -translate-y-1/2 font-fraunces italic text-white/[0.025] text-[16rem] lg:text-[26rem] leading-none select-none pointer-events-none ${flip ? '-left-8 lg:-left-16' : '-right-8 lg:-right-16'}`}
+              >
+                {d.num}
+              </span>
+
+              <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 lg:py-32">
+                <div className={`flex flex-col ${flip ? 'lg:flex-row-reverse' : 'lg:flex-row'} gap-14 lg:gap-20 items-center`}>
+
+                  {/* Image — parallax + glass overlay + hover zoom/glow */}
                   <Reveal className="w-full lg:w-[48%]">
-                    <div className="relative rounded-3xl overflow-hidden ring-1 ring-white/10 shadow-[0_30px_80px_rgba(0,0,0,0.5)]">
-                      <img src={d.img} alt={d.imgAlt} className="w-full aspect-[4/3] object-cover" />
-                      <div className="absolute inset-0 bg-gradient-to-t from-[#050d1a]/55 via-transparent to-transparent" />
-                      <div className="absolute top-5 left-5 w-12 h-12 rounded-2xl bg-[#04090f]/70 backdrop-blur-md border border-[#e6a84f]/25 flex items-center justify-center text-[#e6a84f]">
+                    <div className="group relative rounded-[2rem] overflow-hidden ring-1 ring-white/10 hover:ring-[#e6a84f]/40 shadow-[0_30px_80px_rgba(0,0,0,0.55)] transition-all duration-500">
+                      <ParallaxImage src={d.img} alt={d.imgAlt} className="aspect-[4/3]" intensity={9} />
+                      <div className="absolute inset-0 [transition:background-color_0.5s] group-hover:bg-black/0 bg-black/[0.02] pointer-events-none" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-[#050d1a]/65 via-transparent to-transparent" />
+                      {/* hover glow sweep */}
+                      <span className="absolute inset-0 bg-gradient-to-tr from-[#e6a84f]/0 via-[#e6a84f]/0 to-[#e6a84f]/0 group-hover:from-[#e6a84f]/[0.06] group-hover:via-transparent group-hover:to-transparent transition-all duration-700 pointer-events-none" />
+                      {/* icon chip */}
+                      <div className="absolute top-5 left-5 w-12 h-12 rounded-2xl bg-[#04090f]/70 backdrop-blur-md border border-[#e6a84f]/25 flex items-center justify-center text-[#e6a84f] shadow-[0_8px_24px_rgba(0,0,0,0.4)]">
                         <d.Icon />
                       </div>
+                      {/* glass caption chip */}
+                      <span className="absolute bottom-5 left-5 backdrop-blur-md bg-black/45 border border-white/15 rounded-full px-3.5 py-1.5 font-inter text-[10px] font-semibold tracking-[0.1em] uppercase text-white/85">
+                        {d.caption}
+                      </span>
+                      {/* scale-on-hover sheen border */}
+                      <div className="absolute inset-3 rounded-[1.5rem] border border-white/0 group-hover:border-[#e6a84f]/20 transition-colors duration-500 pointer-events-none" />
                     </div>
                   </Reveal>
 
-                  {/* Content */}
+                  {/* Content — premium serif title, sans description */}
                   <div className="w-full lg:w-[52%]">
+                    <div className="flex items-end gap-5 mb-2">
+                      <BigNumeral num={d.num} />
+                      <div className="h-px flex-1 bg-gradient-to-r from-[#e6a84f]/25 to-transparent mb-7" />
+                    </div>
                     <Reveal>
-                      <p className="font-poppins text-[#e6a84f]/35 font-extrabold text-5xl leading-none mb-4 select-none">{d.num}</p>
-                      <h2 className="font-poppins font-extrabold text-white text-3xl lg:text-4xl mb-4">{s.title}</h2>
-                      <p className="font-inter text-white/55 text-base leading-relaxed mb-7 max-w-lg">{s.desc}</p>
+                      <p className="font-inter text-[#e6a84f] text-[11px] font-bold tracking-[0.32em] uppercase mb-4">{`Service ${d.num}`}</p>
+                      <h2 className="font-fraunces italic font-semibold text-white text-4xl sm:text-5xl lg:text-[3.4rem] leading-[1.08] tracking-tight mb-6">
+                        {s.title}
+                      </h2>
+                      <p className="font-inter text-white/55 text-base lg:text-[17px] leading-relaxed mb-8 max-w-lg">{s.desc}</p>
                     </Reveal>
-                    <div className="grid sm:grid-cols-2 gap-x-6 gap-y-3.5 mb-8 max-w-lg">
+                    <div className="grid sm:grid-cols-2 gap-x-6 gap-y-3.5 mb-9 max-w-lg">
                       {d.points.map((pt, pi) => (
-                        <Reveal key={pi} delay={0.05 * pi}>
-                          <div className="flex items-start gap-2.5">
-                            <span className="mt-1 flex-shrink-0 text-[#e6a84f]">
-                              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7.5l3 3 7-8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                        <Reveal key={pi} delay={0.07 * pi}>
+                          <div className="group/pt flex items-start gap-2.5">
+                            <span className="mt-1 flex-shrink-0 w-4 h-4 rounded-full bg-[#e6a84f]/10 border border-[#e6a84f]/30 flex items-center justify-center text-[#e6a84f] group-hover/pt:bg-[#e6a84f]/20 transition-colors duration-300">
+                              <svg width="9" height="9" viewBox="0 0 14 14" fill="none"><path d="M2 7.5l3 3 7-8" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" /></svg>
                             </span>
                             <span className="font-inter text-white/65 text-sm leading-snug">{pt}</span>
                           </div>

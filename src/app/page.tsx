@@ -14,10 +14,10 @@ const easeExpo = [0.16, 1, 0.3, 1] as [number, number, number, number];
 
 function ScrollReveal({ children, className }: { children: React.ReactNode; className?: string }) {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: '-60px' });
+  const isInView = useInView(ref, { once: false, margin: '-60px' });
   return (
     <motion.div ref={ref} className={className}
-      initial={{ opacity: 0, y: 28 }} animate={isInView ? { opacity: 1, y: 0 } : {}}
+      initial={{ opacity: 0, y: 28 }} animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 28 }}
       transition={{ duration: 0.65, ease }}>
       {children}
     </motion.div>
@@ -322,7 +322,7 @@ function RevealHeading({ text, className, inView }: { text: string; className?: 
           {word.split('').map((ch, ci) => (
             <motion.span key={ci} className="inline-block"
               initial={{ opacity: 0, y: 24, rotateX: -40 }}
-              animate={inView ? { opacity: 1, y: 0, rotateX: 0 } : {}}
+              animate={inView ? { opacity: 1, y: 0, rotateX: 0 } : { opacity: 0, y: 24, rotateX: -40 }}
               transition={{ delay: 0.3 + (wi * 4 + ci) * 0.022, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}>
               {ch}
             </motion.span>
@@ -382,16 +382,14 @@ const SHOWCASE_IMAGES = [
    (replaces the former statistics / timeline / photo-gallery)
    ════════════════════════════════════════════════════════════════ */
 
-const LEGACY_CHAPTERS = [
+/* Alternating editorial milestones (rendered in LegacyTimeline) — 1991 leads the timeline */
+const LEGACY_MILESTONES = [
   {
     year: '1991', kicker: 'The Beginning',
-    lines: ['One Vision.', 'One Team.', 'One Commitment.'],
+    headline: 'One Vision. One Team. One Commitment.',
+    sub: 'Founded in Cuddalore with a single conviction — that South Indian businesses deserved manpower they could genuinely trust.',
     img: '/images/dsc/guard-lineup-1.jpg',
   },
-];
-
-/* Alternating editorial milestones (rendered in LegacyTimeline) */
-const LEGACY_MILESTONES = [
   {
     year: '2000', kicker: 'Expansion',
     headline: 'Expanding Across Tamil Nadu.',
@@ -420,54 +418,12 @@ const LEGACY_FIGURES = [
   { v: '5', u: 'Core Industries' },
 ];
 
-/* — One full-height legacy chapter — */
-function LegacyChapter({ chapter }: { chapter: typeof LEGACY_CHAPTERS[0] }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { once: true, margin: '-28%' });
-  const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] });
-  const imgScale = useTransform(scrollYProgress, [0, 1], [1.32, 1.08]);
-  const imgY = useTransform(scrollYProgress, [0, 1], ['-5%', '5%']);
-  const textY = useTransform(scrollYProgress, [0, 1], [70, -70]);
-
-  return (
-    <div ref={ref} className="relative h-screen min-h-[600px] w-full overflow-hidden flex items-center justify-center">
-      <motion.div style={{ scale: imgScale, y: imgY }} className="absolute inset-0 will-change-transform">
-        <motion.img src={chapter.img} alt=""
-          className="w-full h-full object-cover"
-          initial={{ opacity: 0, filter: 'blur(22px)' }}
-          animate={inView ? { opacity: 1, filter: 'blur(0px)' } : {}}
-          transition={{ duration: 1.9, ease: [0.22, 1, 0.36, 1] }} />
-      </motion.div>
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(4,9,15,0.55)_0%,rgba(3,6,12,0.9)_100%)]" />
-      <div className="absolute inset-0 bg-[#04090f]/25" />
-
-      <motion.div style={{ y: textY }} className="relative z-10 text-center px-6 max-w-4xl">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 1.1, ease: [0.22, 1, 0.36, 1] }}
-          className="font-fraunces font-semibold leading-none mb-5 tracking-tight bg-gradient-to-b from-white/[0.18] to-white/[0.04] bg-clip-text text-transparent"
-          style={{ fontSize: 'clamp(5rem, 16vw, 13rem)' }}>
-          {chapter.year}
-        </motion.div>
-        <motion.p initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : {}} transition={{ delay: 0.25, duration: 0.9 }}
-          className="font-inter text-[#e6a84f] text-[11px] tracking-[0.55em] uppercase mb-7">{chapter.kicker}</motion.p>
-        <div className="space-y-1.5">
-          {chapter.lines.map((ln, li) => (
-            <RevealHeading key={li} inView={inView} text={ln}
-              className="font-poppins text-3xl md:text-5xl lg:text-6xl font-bold text-white leading-[1.1]" />
-          ))}
-        </div>
-      </motion.div>
-    </div>
-  );
-}
-
 /* — 2025 finale: figures as luxury typography — */
 /* Count-up hook — eases to target on activate; respects reduced-motion */
 function useCountUp(target: number, active: boolean, duration = 1800) {
   const [n, setN] = useState(0);
   useEffect(() => {
-    if (!active) return;
+    if (!active) { setN(0); return; }
     if (typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       setN(target);
       return;
@@ -492,7 +448,7 @@ function LegacyStatCard({ stat, index, active }: { stat: typeof LEGACY_STATS[0];
   return (
     <motion.div
       initial={{ opacity: 0, y: 30 }}
-      animate={active ? { opacity: 1, y: 0 } : {}}
+      animate={active ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
       transition={{ delay: 0.35 + index * 0.1, duration: 0.7, ease }}
       className="group relative overflow-hidden rounded-2xl bg-white/[0.035] backdrop-blur-xl border border-white/[0.08] hover:border-[#e6a84f]/40 p-5 sm:p-6 lg:p-7 transition-all duration-500 hover:-translate-y-1.5 hover:shadow-[0_28px_64px_rgba(0,0,0,0.55)]"
     >
@@ -513,7 +469,7 @@ function LegacyStatCard({ stat, index, active }: { stat: typeof LEGACY_STATS[0];
 
 function LegacyFinale() {
   const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { once: true, margin: '-18%' });
+  const inView = useInView(ref, { once: false, margin: '-18%' });
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] });
   const imgScale = useTransform(scrollYProgress, [0, 1], [1.2, 1.05]);
   const imgY = useTransform(scrollYProgress, [0, 1], ['-3%', '6%']);
@@ -548,7 +504,7 @@ function LegacyFinale() {
 
       <div className="relative z-10 max-w-7xl mx-auto px-5 sm:px-8 w-full">
         {/* Heading */}
-        <motion.div initial={{ opacity: 0, y: 26 }} animate={inView ? { opacity: 1, y: 0 } : {}}
+        <motion.div initial={{ opacity: 0, y: 26 }} animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 26 }}
           transition={{ duration: 0.9, ease }} className="max-w-3xl mb-12 lg:mb-16">
           <div className="inline-flex items-center gap-2.5 mb-6">
             <span className="w-8 h-px bg-[#e6a84f]" />
@@ -567,7 +523,7 @@ function LegacyFinale() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-5">
           {/* Feature panel */}
           <motion.div
-            initial={{ opacity: 0, y: 34 }} animate={inView ? { opacity: 1, y: 0 } : {}}
+            initial={{ opacity: 0, y: 34 }} animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 34 }}
             transition={{ delay: 0.2, duration: 0.85, ease }}
             className="lg:col-span-5 group relative overflow-hidden rounded-3xl border border-[#e6a84f]/25 bg-gradient-to-br from-[#0c1622]/85 to-[#04090f]/85 backdrop-blur-2xl p-7 sm:p-9 lg:p-10 flex flex-col justify-between min-h-[300px] lg:min-h-[460px]">
             <img src="/images/dsc/team-group-1.jpg" alt="" aria-hidden
@@ -707,49 +663,49 @@ function DisciplineInMotion() {
 /* — Alternating editorial milestone (2000 · 2010 · 2025) — */
 function LegacyMilestone({ m, index }: { m: typeof LEGACY_MILESTONES[0]; index: number }) {
   const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { once: true, margin: '-18%' });
+  const inView = useInView(ref, { once: false, margin: '-18%' });
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] });
   const imgY = useTransform(scrollYProgress, [0, 1], ['-7%', '7%']);
   const flip = index % 2 === 1;
 
   return (
     <div ref={ref} className="relative">
-      {/* node on the central line (desktop) */}
-      <div className="hidden lg:block absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-20">
-        <motion.span initial={{ scale: 0, opacity: 0 }} animate={inView ? { scale: 1, opacity: 1 } : {}} transition={{ duration: 0.5, ease }}
-          className="flex w-4 h-4 rounded-full bg-[#04090f] border-2 border-[#e6a84f] items-center justify-center">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#e6a84f] shadow-[0_0_12px_rgba(230,168,79,0.9)]" />
+      {/* node on the central spine — visible on every device */}
+      <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-20">
+        <motion.span initial={{ scale: 0, opacity: 0 }} animate={inView ? { scale: 1, opacity: 1 } : { scale: 0, opacity: 0 }} transition={{ duration: 0.5, ease }}
+          className="flex w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full bg-[#04090f] border-2 border-[#e6a84f] items-center justify-center">
+          <span className="w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full bg-[#e6a84f] shadow-[0_0_12px_rgba(230,168,79,0.9)]" />
         </motion.span>
       </div>
 
-      <div className="grid lg:grid-cols-2 gap-8 lg:gap-20 items-center">
+      <div className="grid grid-cols-2 gap-3 sm:gap-8 lg:gap-20 items-center">
         {/* IMAGE — soft-morphism frame + parallax */}
-        <motion.div initial={{ opacity: 0, y: 42 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.9, ease }}
-          className={`relative ${flip ? 'lg:order-2' : ''}`}>
-          <div className="relative rounded-[1.75rem] p-2 bg-gradient-to-br from-[#0e1c28] to-[#070e16] border border-white/10
-            shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_30px_64px_rgba(0,0,0,0.55)]">
-            <div className="relative aspect-[16/11] overflow-hidden rounded-[1.4rem]">
+        <motion.div initial={{ opacity: 0, y: 42 }} animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 42 }} transition={{ duration: 0.9, ease }}
+          className={`relative ${flip ? 'order-2' : ''}`}>
+          <div className="relative rounded-2xl sm:rounded-[1.75rem] p-1.5 sm:p-2 bg-gradient-to-br from-[#0e1c28] to-[#070e16] border border-white/10
+            shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_16px_38px_rgba(0,0,0,0.5)] sm:shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_30px_64px_rgba(0,0,0,0.55)]">
+            <div className="relative aspect-[16/11] overflow-hidden rounded-xl sm:rounded-[1.4rem]">
               <motion.img style={{ y: imgY }} src={m.img} alt={`Sai Saktheeswari — ${m.kicker}`}
                 className="absolute inset-0 w-full h-[118%] object-cover will-change-transform" />
               <div className="absolute inset-0 bg-gradient-to-t from-[#04090f]/65 via-transparent to-transparent" />
-              <div className="absolute inset-3 rounded-[1.1rem] border border-[#e6a84f]/15 pointer-events-none" />
+              <div className="absolute inset-2 sm:inset-3 rounded-lg sm:rounded-[1.1rem] border border-[#e6a84f]/15 pointer-events-none" />
             </div>
           </div>
         </motion.div>
 
         {/* TEXT */}
-        <div className={`relative ${flip ? 'lg:order-1 lg:pr-12' : 'lg:pl-12'}`}>
-          <motion.span initial={{ opacity: 0, y: 26 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.9, ease }}
+        <div className={`relative ${flip ? 'order-1 pr-2.5 sm:pr-6 lg:pr-12' : 'pl-2.5 sm:pl-6 lg:pl-12'}`}>
+          <motion.span initial={{ opacity: 0, y: 26 }} animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 26 }} transition={{ duration: 0.9, ease }}
             className="block font-fraunces font-semibold leading-[0.9] tracking-tight bg-gradient-to-br from-[#f7d99a] via-[#e6a84f] to-[#c8902e] bg-clip-text text-transparent drop-shadow-[0_4px_30px_rgba(230,168,79,0.18)]"
-            style={{ fontSize: 'clamp(3.4rem, 8vw, 6rem)' }}>
+            style={{ fontSize: 'clamp(2.1rem, 9vw, 6rem)' }}>
             {m.year}
           </motion.span>
-          <motion.p initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : {}} transition={{ delay: 0.2, duration: 0.8 }}
-            className="font-inter text-[#f0be6a] text-[11px] tracking-[0.4em] uppercase mt-3 mb-5">{m.kicker}</motion.p>
+          <motion.p initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : { opacity: 0 }} transition={{ delay: 0.2, duration: 0.8 }}
+            className="font-inter text-[#f0be6a] text-[9px] sm:text-[11px] tracking-[0.28em] sm:tracking-[0.4em] uppercase mt-2 sm:mt-3 mb-2.5 sm:mb-5">{m.kicker}</motion.p>
           <RevealHeading inView={inView} text={m.headline}
-            className="font-poppins text-3xl md:text-4xl lg:text-5xl font-extrabold text-white leading-[1.06] tracking-[-0.01em]" />
-          <motion.p initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : {}} transition={{ delay: 0.7, duration: 0.9 }}
-            className="font-inter text-white/65 text-base lg:text-lg leading-relaxed mt-6 max-w-md">{m.sub}</motion.p>
+            className="font-poppins text-base sm:text-3xl md:text-4xl lg:text-5xl font-extrabold text-white leading-[1.12] sm:leading-[1.06] tracking-[-0.01em]" />
+          <motion.p initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : { opacity: 0 }} transition={{ delay: 0.7, duration: 0.9 }}
+            className="font-inter text-white/65 text-[11px] sm:text-base lg:text-lg leading-relaxed mt-3 sm:mt-6 max-w-md">{m.sub}</motion.p>
         </div>
       </div>
     </div>
@@ -837,17 +793,17 @@ function LegacyTimeline() {
         </h2>
       </FadeIn>
 
-      <div className="relative z-10 max-w-7xl mx-auto px-5 sm:px-8">
-        {/* central timeline line (desktop) */}
-        <div className="hidden lg:block absolute left-1/2 top-0 bottom-0 w-px -translate-x-1/2 bg-white/10" />
-        <motion.div style={{ scaleY: lineScaleY }} className="hidden lg:block absolute left-1/2 top-0 bottom-0 w-px -translate-x-1/2 origin-top bg-gradient-to-b from-[#f0be6a] via-[#e6a84f] to-[#c8902e] shadow-[0_0_16px_rgba(230,168,79,0.7)]" />
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-8">
+        {/* central timeline spine — visible on every device */}
+        <div className="absolute left-1/2 top-0 bottom-0 w-px -translate-x-1/2 bg-white/10" />
+        <motion.div style={{ scaleY: lineScaleY }} className="absolute left-1/2 top-0 bottom-0 w-px -translate-x-1/2 origin-top bg-gradient-to-b from-[#f0be6a] via-[#e6a84f] to-[#c8902e] shadow-[0_0_16px_rgba(230,168,79,0.7)]" />
         {/* traveling comet head */}
         <motion.div style={{ top: cometTop, opacity: cometOpacity }}
-          className="hidden lg:block absolute left-1/2 -translate-x-1/2 -translate-y-1/2 z-10">
-          <span className="block w-2.5 h-2.5 rounded-full bg-[#f7d99a] shadow-[0_0_18px_6px_rgba(230,168,79,0.6)]" />
+          className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 z-10">
+          <span className="block w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-[#f7d99a] shadow-[0_0_18px_6px_rgba(230,168,79,0.6)]" />
         </motion.div>
 
-        <div className="space-y-24 lg:space-y-36">
+        <div className="space-y-14 sm:space-y-24 lg:space-y-36">
           {LEGACY_MILESTONES.map((m, i) => <LegacyMilestone key={m.year} m={m} index={i} />)}
         </div>
       </div>
@@ -857,7 +813,7 @@ function LegacyTimeline() {
 
 function LegacyExperience() {
   const introRef = useRef<HTMLDivElement>(null);
-  const introInView = useInView(introRef, { once: true, margin: '-15%' });
+  const introInView = useInView(introRef, { once: false, margin: '-15%' });
   const { scrollYProgress } = useScroll({ target: introRef, offset: ['start start', 'end start'] });
   const introImgScale = useTransform(scrollYProgress, [0, 1], [1.15, 1.3]);
   const introImgOpacity = useTransform(scrollYProgress, [0, 1], [0.32, 0.1]);
@@ -875,7 +831,7 @@ function LegacyExperience() {
 
         <div className="relative z-10 text-center px-6">
           <motion.p
-            initial={{ opacity: 0, y: 20 }} animate={introInView ? { opacity: 1, y: 0 } : {}}
+            initial={{ opacity: 0, y: 20 }} animate={introInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
             transition={{ duration: 1.1, ease: [0.22, 1, 0.36, 1] }}
             className="font-poppins font-extrabold text-[#e6a84f] tracking-[0.08em] uppercase leading-none mb-6"
             style={{ fontSize: 'clamp(2.4rem, 7vw, 6rem)' }}>
@@ -883,16 +839,15 @@ function LegacyExperience() {
           </motion.p>
           <RevealHeading inView={introInView} text="A Legacy Built On Trust"
             className="font-poppins text-4xl md:text-6xl lg:text-7xl font-extrabold text-white leading-[1.04] max-w-5xl mx-auto" />
-          <motion.div initial={{ scaleX: 0 }} animate={introInView ? { scaleX: 1 } : {}}
+          <motion.div initial={{ scaleX: 0 }} animate={introInView ? { scaleX: 1 } : { scaleX: 0 }}
             transition={{ delay: 0.9, duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
             className="mx-auto mt-10 h-px w-56 bg-gradient-to-r from-transparent via-[#e6a84f] to-transparent" />
-          <motion.p initial={{ opacity: 0 }} animate={introInView ? { opacity: 1 } : {}} transition={{ delay: 1.2, duration: 1 }}
+          <motion.p initial={{ opacity: 0 }} animate={introInView ? { opacity: 1 } : { opacity: 0 }} transition={{ delay: 1.2, duration: 1 }}
             className="font-inter text-white/40 text-xs tracking-[0.3em] uppercase mt-10">Scroll to begin</motion.p>
         </div>
       </div>
 
-      {/* ── SECTION 1 · LEGACY STORY ── */}
-      {LEGACY_CHAPTERS.map((c, i) => <LegacyChapter key={i} chapter={c} />)}
+      {/* ── SECTION 1 · LEGACY STORY (timeline leads with 1991) ── */}
       <LegacyTimeline />
       <LegacyFinale />
 
@@ -932,14 +887,14 @@ const FOUNDER_STORY = [
 
 function JourneyMilestone({ entry, index }: { entry: typeof FOUNDER_STORY[0]; index: number }) {
   const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { once: true, margin: '-18%' });
+  const inView = useInView(ref, { once: false, margin: '-18%' });
   const isLeft = index % 2 === 0;
   return (
     <div ref={ref} className="relative pb-14 lg:pb-20 last:pb-0 pl-14 lg:pl-0 lg:grid lg:grid-cols-2">
       {/* Glowing pulse node on the rail */}
       <div className="absolute left-3 lg:left-1/2 lg:-translate-x-1/2 top-6 z-20">
         <motion.span
-          initial={{ scale: 0 }} animate={inView ? { scale: 1 } : {}}
+          initial={{ scale: 0 }} animate={inView ? { scale: 1 } : { scale: 0 }}
           transition={{ duration: 0.55, ease }}
           className="relative flex h-4 w-4 items-center justify-center">
           <span className="absolute inline-flex h-full w-full rounded-full bg-[#e6a84f]/40 animate-ping" />
@@ -949,7 +904,7 @@ function JourneyMilestone({ entry, index }: { entry: typeof FOUNDER_STORY[0]; in
 
       {/* Glass milestone panel — alternates sides on desktop */}
       <motion.div
-        initial={{ opacity: 0, y: 40 }} animate={inView ? { opacity: 1, y: 0 } : {}}
+        initial={{ opacity: 0, y: 40 }} animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 40 }}
         transition={{ duration: 0.8, ease }}
         className={isLeft ? 'lg:col-start-1 lg:pr-14' : 'lg:col-start-2 lg:pl-14'}>
         <div className={`group relative overflow-hidden rounded-3xl bg-white/[0.03] backdrop-blur-xl border border-white/[0.08] hover:border-[#e6a84f]/40 p-6 lg:p-8 transition-all duration-500 hover:-translate-y-1.5 hover:shadow-[0_28px_64px_rgba(0,0,0,0.5)] ${isLeft ? 'lg:text-right' : ''}`}>
@@ -1037,7 +992,7 @@ function ServiceCard({ service, index }: { service: typeof SERVICES[0]; index: n
     <motion.a href="/services"
       initial={{ opacity: 0, y: 34 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: '-60px' }}
+      viewport={{ once: false, margin: '-60px' }}
       transition={{ duration: 0.7, delay: (index % 2) * 0.1, ease }}
       className={`${span} group relative overflow-hidden rounded-3xl ring-1 ring-white/[0.08] hover:ring-[#e6a84f]/40 min-h-[300px] lg:min-h-[360px] flex transition-all duration-500 hover:-translate-y-1.5 hover:shadow-[0_30px_70px_rgba(0,0,0,0.55)]`}>
       <img src={v.img} alt={service.title}
@@ -1101,7 +1056,7 @@ function ServicesSection() {
   );
 }
 
-/* ─── 4S ENTERPRISE PROCESS ─── */
+/* ─── S4 ENTERPRISE PROCESS ─── */
 
 type EntMetric = { value?: number; suffix?: string; comma?: boolean; display?: string; label: string };
 const ENT_METRICS: EntMetric[] = [
@@ -1148,7 +1103,7 @@ const PROCESS_STEPS = [
 
 function ProcessStepPanel({ step, index }: { step: typeof PROCESS_STEPS[0]; index: number }) {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: '-80px' });
+  const isInView = useInView(ref, { once: false, margin: '-80px' });
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] });
   const imgY = useTransform(scrollYProgress, [0, 1], [20, -20]);
 
@@ -1166,7 +1121,7 @@ function ProcessStepPanel({ step, index }: { step: typeof PROCESS_STEPS[0]; inde
                 className="w-full aspect-[4/3] lg:aspect-[16/11] object-cover scale-110" />
               <div className="absolute inset-0 bg-gradient-to-t from-[#050d1a]/55 via-transparent to-transparent" />
               <motion.div
-                initial={{ opacity: 0, y: 16 }} animate={isInView ? { opacity: 1, y: 0 } : {}}
+                initial={{ opacity: 0, y: 16 }} animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 16 }}
                 transition={{ delay: 0.55, duration: 0.5 }}
                 className={`absolute bottom-5 ${step.flip ? 'left-5' : 'right-5'} bg-black/70 backdrop-blur-xl border border-white/10 rounded-2xl px-5 py-4`}>
                 <p className="font-poppins text-2xl font-extrabold text-[#e6a84f] leading-none">{step.stat}</p>
@@ -1178,7 +1133,7 @@ function ProcessStepPanel({ step, index }: { step: typeof PROCESS_STEPS[0]; inde
           {/* Content side */}
           <div className="w-full lg:w-[48%]">
             <motion.div
-              initial={{ opacity: 0, x: step.flip ? 24 : -24 }} animate={isInView ? { opacity: 1, x: 0 } : {}}
+              initial={{ opacity: 0, x: step.flip ? 24 : -24 }} animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: step.flip ? 24 : -24 }}
               transition={{ duration: 0.65 }}
               className="flex items-end gap-4 mb-5">
               <span className="font-poppins text-[6rem] lg:text-[9rem] xl:text-[11rem] font-extrabold text-white/[0.04] leading-none select-none">{step.num}</span>
@@ -1186,21 +1141,21 @@ function ProcessStepPanel({ step, index }: { step: typeof PROCESS_STEPS[0]; inde
             </motion.div>
 
             <motion.p
-              initial={{ opacity: 0, y: 12 }} animate={isInView ? { opacity: 1, y: 0 } : {}}
+              initial={{ opacity: 0, y: 12 }} animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 12 }}
               transition={{ delay: 0.12, duration: 0.55 }}
               className="font-inter text-[#e6a84f] text-[10px] font-bold tracking-[0.3em] uppercase mb-3">
               {step.eyebrow}
             </motion.p>
 
             <motion.h3
-              initial={{ opacity: 0, y: 18 }} animate={isInView ? { opacity: 1, y: 0 } : {}}
+              initial={{ opacity: 0, y: 18 }} animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 18 }}
               transition={{ delay: 0.18, duration: 0.6 }}
               className="font-poppins text-5xl lg:text-6xl xl:text-7xl font-extrabold text-white leading-none mb-7">
               {step.key}
             </motion.h3>
 
             <motion.p
-              initial={{ opacity: 0, y: 12 }} animate={isInView ? { opacity: 1, y: 0 } : {}}
+              initial={{ opacity: 0, y: 12 }} animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 12 }}
               transition={{ delay: 0.25, duration: 0.6 }}
               className="font-inter text-white/48 text-base lg:text-lg leading-relaxed mb-8">
               {step.desc}
@@ -1209,7 +1164,7 @@ function ProcessStepPanel({ step, index }: { step: typeof PROCESS_STEPS[0]; inde
             <div className="space-y-3.5">
               {step.points.map((pt, pi) => (
                 <motion.div key={pi}
-                  initial={{ opacity: 0, x: -14 }} animate={isInView ? { opacity: 1, x: 0 } : {}}
+                  initial={{ opacity: 0, x: -14 }} animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -14 }}
                   transition={{ delay: 0.32 + pi * 0.075, duration: 0.45 }}
                   className="flex items-center gap-3.5 group cursor-default">
                   <div className="w-5 h-5 rounded-full bg-[#e6a84f]/8 border border-[#e6a84f]/25 flex items-center justify-center flex-shrink-0 group-hover:bg-[#e6a84f]/18 group-hover:border-[#e6a84f]/50 transition-all duration-200">
@@ -1229,7 +1184,7 @@ function ProcessStepPanel({ step, index }: { step: typeof PROCESS_STEPS[0]; inde
 
 function ProcessMetric({ m }: { m: EntMetric }) {
   const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: '-30px' });
+  const inView = useInView(ref, { once: false, margin: '-30px' });
   const [n, setN] = useState(0);
   useEffect(() => {
     if (!inView || m.value == null) return;
@@ -1247,7 +1202,7 @@ function ProcessMetric({ m }: { m: EntMetric }) {
   const text = m.display ?? `${m.comma ? n.toLocaleString('en-IN') : n}${m.suffix ?? ''}`;
   return (
     <motion.div ref={ref}
-      initial={{ opacity: 0, y: 26, scale: 0.96 }} whileInView={{ opacity: 1, y: 0, scale: 1 }} viewport={{ once: true }} transition={{ duration: 0.65, ease: easeExpo }}
+      initial={{ opacity: 0, y: 26, scale: 0.96 }} whileInView={{ opacity: 1, y: 0, scale: 1 }} viewport={{ once: false }} transition={{ duration: 0.65, ease: easeExpo }}
       className="group relative bg-[#0a1422]/85 backdrop-blur-xl border border-[#e6a84f]/20 rounded-2xl p-5 lg:p-7 text-center shadow-[0_20px_55px_rgba(0,0,0,0.55)] hover:border-[#e6a84f]/45 hover:-translate-y-1.5 transition-all duration-300 overflow-hidden">
       <span className="absolute -top-10 left-1/2 -translate-x-1/2 w-28 h-20 bg-[#e6a84f]/12 blur-2xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
       <span className="relative block font-poppins font-extrabold text-[#e6a84f] text-[2rem] lg:text-[2.7rem] leading-none tabular-nums drop-shadow-[0_2px_16px_rgba(230,168,79,0.35)]">{text}</span>
@@ -1287,30 +1242,30 @@ function ProcessSection() {
 
             {/* LEFT — editorial */}
             <div className="lg:col-span-7">
-              <motion.div initial={{ opacity: 0, y: 14 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.7, ease: easeExpo }}
+              <motion.div initial={{ opacity: 0, y: 14 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: false }} transition={{ duration: 0.7, ease: easeExpo }}
                 className="flex items-center gap-4 mb-8">
                 <span className="h-px w-14 bg-gradient-to-r from-[#e6a84f] to-transparent" />
                 <span className="font-inter text-[#f0be6a] text-[10px] font-semibold tracking-[0.42em] uppercase">Est. 1991 · Proven Methodology</span>
               </motion.div>
 
               <h2 className="font-poppins font-extrabold leading-[0.86] tracking-[-0.03em]">
-                <motion.span initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: '-10%' }} transition={{ duration: 0.85, delay: 0.05, ease: easeExpo }}
-                  className="block text-[4rem] sm:text-7xl lg:text-8xl xl:text-[9rem] text-white">The 4<span className="text-[#e6a84f]">S</span></motion.span>
-                <motion.span initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: '-10%' }} transition={{ duration: 0.85, delay: 0.16, ease: easeExpo }}
+                <motion.span initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: false, margin: '-10%' }} transition={{ duration: 0.85, delay: 0.05, ease: easeExpo }}
+                  className="block text-[4rem] sm:text-7xl lg:text-8xl xl:text-[9rem] text-white">The <span className="text-[#e6a84f]">S</span>4</motion.span>
+                <motion.span initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: false, margin: '-10%' }} transition={{ duration: 0.85, delay: 0.16, ease: easeExpo }}
                   className="block text-[4rem] sm:text-7xl lg:text-8xl xl:text-[9rem] text-white/45">System</motion.span>
               </h2>
 
-              <motion.p initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.8, delay: 0.42, ease: easeExpo }}
+              <motion.p initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: false }} transition={{ duration: 0.8, delay: 0.42, ease: easeExpo }}
                 className="font-fraunces italic text-[#f0be6a] text-2xl lg:text-[2.1rem] leading-snug mt-6">
-                Four disciplined stages. One workforce standard.
+                The S4 standard. One workforce promise.
               </motion.p>
 
-              <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ duration: 0.7, delay: 0.58 }}
+              <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: false }} transition={{ duration: 0.7, delay: 0.58 }}
                 className="font-inter text-white/70 text-base lg:text-lg max-w-lg leading-relaxed mt-7">
-                Every worker we deploy follows our proprietary 4S journey — from talent sourcing to long-term performance assurance.
+                Every worker we deploy follows our proprietary S4 journey — from talent sourcing to long-term performance assurance.
               </motion.p>
 
-              <motion.div initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.7, delay: 0.72, ease: easeExpo }}
+              <motion.div initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: false }} transition={{ duration: 0.7, delay: 0.72, ease: easeExpo }}
                 className="flex flex-wrap items-center gap-x-5 gap-y-2.5 mt-9">
                 {['Source', 'Screen', 'Support', 'Sustain'].map((st, i) => (
                   <div key={st} className="flex items-center gap-5">
@@ -1325,7 +1280,7 @@ function ProcessSection() {
 
             {/* RIGHT — soft-morphism framed image + floating emblem */}
             <div className="lg:col-span-5">
-              <motion.div initial={{ opacity: 0, scale: 0.94, y: 30 }} whileInView={{ opacity: 1, scale: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 1, delay: 0.3, ease: easeExpo }}
+              <motion.div initial={{ opacity: 0, scale: 0.94, y: 30 }} whileInView={{ opacity: 1, scale: 1, y: 0 }} viewport={{ once: false }} transition={{ duration: 1, delay: 0.3, ease: easeExpo }}
                 className="relative">
                 <div className="relative rounded-[2rem] p-2 bg-gradient-to-br from-[#0e1c28] to-[#070e16] border border-white/10
                   shadow-[inset_0_1px_0_rgba(255,255,255,0.07),0_30px_70px_rgba(0,0,0,0.6),0_0_0_1px_rgba(230,168,79,0.1)]">
@@ -1368,13 +1323,13 @@ function ProcessSection() {
         </motion.div>
       </div>
 
-      {/* ── 4S JOURNEY — compact & detailed (replaces the 4 full-screen panels) ── */}
+      {/* ── S4 JOURNEY — compact & detailed (replaces the 4 full-screen panels) ── */}
       <div ref={journeyRef} className="relative bg-[#04090f] py-20 lg:py-28 border-t border-white/[0.05] overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_50%_60%_at_50%_0%,rgba(230,168,79,0.06),transparent)] pointer-events-none" />
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <FadeIn className="text-center mb-10">
-            <p className="font-inter text-[#e6a84f] text-[11px] font-bold tracking-[0.4em] uppercase mb-3">The 4S Journey</p>
-            <h3 className="font-fraunces italic text-white/90 text-2xl lg:text-[2.2rem] leading-snug">Four disciplined stages, one standard.</h3>
+            <p className="font-inter text-[#e6a84f] text-[11px] font-bold tracking-[0.4em] uppercase mb-3">The S4 Journey</p>
+            <h3 className="font-fraunces italic text-white/90 text-2xl lg:text-[2.2rem] leading-snug">The S4 standard — four stages, one discipline.</h3>
           </FadeIn>
 
           {/* scroll-drawn progress track */}
@@ -1385,7 +1340,7 @@ function ProcessSection() {
           <div className="grid md:grid-cols-2 gap-5">
             {stages.map((st, i) => (
               <motion.div key={st.key}
-                initial={{ opacity: 0, y: 28, scale: 0.97 }} whileInView={{ opacity: 1, y: 0, scale: 1 }} viewport={{ once: true, margin: '-50px' }} transition={{ duration: 0.7, delay: i * 0.1, ease: easeExpo }}
+                initial={{ opacity: 0, y: 28, scale: 0.97 }} whileInView={{ opacity: 1, y: 0, scale: 1 }} viewport={{ once: false, margin: '-50px' }} transition={{ duration: 0.7, delay: i * 0.1, ease: easeExpo }}
                 className="group relative overflow-hidden rounded-3xl p-7 lg:p-8 bg-white/[0.03] border border-white/[0.07] hover:border-[#e6a84f]/30 transition-all duration-400 hover:-translate-y-1.5 hover:shadow-[0_24px_56px_rgba(0,0,0,0.45)]">
                 {/* faint numeral watermark + hover glow */}
                 <span className="absolute -top-5 right-3 font-fraunces italic text-white/[0.04] text-[7rem] leading-none select-none pointer-events-none">{st.num}</span>
@@ -1464,7 +1419,7 @@ function TrainingSection() {
             <div className="grid grid-cols-2 gap-3 sm:gap-4">
               {/* Featured wide */}
               <motion.div style={{ y: yFeatured }}
-                initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: '-80px' }} transition={{ duration: 0.7, ease }}
+                initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: false, margin: '-80px' }} transition={{ duration: 0.7, ease }}
                 className="col-span-2 relative rounded-2xl overflow-hidden ring-1 ring-white/10 group aspect-[16/10] shadow-[0_24px_60px_rgba(0,0,0,0.45)]">
                 <img src={photos[0].src} alt={photos[0].caption} className="w-full h-full object-cover scale-105 group-hover:scale-110 transition-transform duration-700 brightness-90" />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#04090f]/85 via-transparent to-transparent" />
@@ -1475,7 +1430,7 @@ function TrainingSection() {
               {/* Two squares */}
               {[photos[1], photos[2]].map((p, i) => (
                 <motion.div key={i}
-                  initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: '-60px' }} transition={{ duration: 0.6, delay: 0.1 + i * 0.1, ease }}
+                  initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: false, margin: '-60px' }} transition={{ duration: 0.6, delay: 0.1 + i * 0.1, ease }}
                   className="relative rounded-2xl overflow-hidden ring-1 ring-white/10 group aspect-square">
                   <img src={p.src} alt={p.caption} loading="lazy" className="w-full h-full object-cover scale-105 group-hover:scale-110 transition-transform duration-700 brightness-90" />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#04090f]/75 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-3">
@@ -1486,7 +1441,7 @@ function TrainingSection() {
 
               {/* Wide bottom */}
               <motion.div
-                initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: '-60px' }} transition={{ duration: 0.6, delay: 0.3, ease }}
+                initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: false, margin: '-60px' }} transition={{ duration: 0.6, delay: 0.3, ease }}
                 className="col-span-2 relative rounded-2xl overflow-hidden ring-1 ring-white/10 group aspect-[16/6]">
                 <img src={photos[3].src} alt={photos[3].caption} loading="lazy" className="w-full h-full object-cover scale-105 group-hover:scale-110 transition-transform duration-700 brightness-90" />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#04090f]/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-3">
@@ -1497,7 +1452,7 @@ function TrainingSection() {
 
             {/* Floating glass stat badge */}
             <motion.div style={{ y: yBadge }}
-              initial={{ opacity: 0, scale: 0.9 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ duration: 0.6, delay: 0.4, ease }}
+              initial={{ opacity: 0, scale: 0.9 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: false }} transition={{ duration: 0.6, delay: 0.4, ease }}
               className="absolute -bottom-5 -right-2 sm:-right-4 bg-[#0a1422]/85 backdrop-blur-xl border border-[#e6a84f]/25 rounded-2xl px-5 py-4 shadow-[0_20px_50px_rgba(0,0,0,0.55)]">
               <p className="font-poppins font-extrabold text-[#e6a84f] text-2xl leading-none">100%</p>
               <p className="font-inter text-white/55 text-[10px] uppercase tracking-[0.16em] mt-1.5 leading-tight">Trained before<br />deployment</p>
@@ -1506,19 +1461,19 @@ function TrainingSection() {
 
           {/* ── RIGHT: Content ── */}
           <div>
-            <motion.div initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, ease }}
+            <motion.div initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: false }} transition={{ duration: 0.5, ease }}
               className="inline-flex items-center gap-2.5 bg-[#e6a84f]/[0.08] border border-[#e6a84f]/25 rounded-full pl-2.5 pr-4 py-1.5 mb-6 backdrop-blur-md">
               <span className="h-1.5 w-1.5 rounded-full bg-[#e6a84f]" />
               <span className="font-inter text-[#f0be6a] text-[11px] font-semibold tracking-[0.22em] uppercase">Training Excellence</span>
             </motion.div>
 
-            <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6, ease }}
+            <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: false }} transition={{ duration: 0.6, ease }}
               className="font-poppins font-extrabold text-white text-3xl sm:text-4xl lg:text-5xl leading-[1.08] mb-5">
               Every worker trained
               <span className="block font-fraunces italic font-medium bg-gradient-to-r from-[#f0be6a] to-[#c8902e] bg-clip-text text-transparent">before deployment.</span>
             </motion.h2>
 
-            <motion.p initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6, delay: 0.1, ease }}
+            <motion.p initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: false }} transition={{ duration: 0.6, delay: 0.1, ease }}
               className="font-inter text-white/55 text-base leading-relaxed mb-9 max-w-xl">
               We supply a <span className="text-white/85 font-medium">discipline-first, professionally trained workforce</span>. Our senior supervisors oversee training at our Cuddalore centre — a standard upheld for 35 years.
             </motion.p>
@@ -1527,7 +1482,7 @@ function TrainingSection() {
             <div className="grid sm:grid-cols-2 gap-3.5 mb-9">
               {points.map((p, i) => (
                 <motion.div key={p.title}
-                  initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: '-40px' }} transition={{ duration: 0.5, delay: i * 0.08, ease }}
+                  initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: false, margin: '-40px' }} transition={{ duration: 0.5, delay: i * 0.08, ease }}
                   className="group relative bg-white/[0.03] border border-white/[0.07] hover:border-[#e6a84f]/30 rounded-2xl p-5 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_16px_40px_rgba(0,0,0,0.4)] overflow-hidden">
                   <span className="absolute -top-12 -right-12 w-24 h-24 bg-[#e6a84f]/10 blur-2xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                   <div className="relative w-11 h-11 rounded-xl bg-[#e6a84f]/[0.1] border border-[#e6a84f]/20 flex items-center justify-center text-[#e6a84f] mb-4 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300">
@@ -1539,7 +1494,7 @@ function TrainingSection() {
               ))}
             </div>
 
-            <motion.div initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: 0.2, ease }}>
+            <motion.div initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: false }} transition={{ duration: 0.5, delay: 0.2, ease }}>
               <a href="/training"
                 className="group relative overflow-hidden inline-flex items-center gap-2.5 bg-gradient-to-br from-[#f0be6a] via-[#e6a84f] to-[#c8902e] text-[#0a1a24] font-poppins font-bold text-sm px-7 py-3.5 rounded-xl shadow-[0_8px_30px_rgba(230,168,79,0.3)] hover:shadow-[0_12px_44px_rgba(230,168,79,0.5)] hover:-translate-y-0.5 transition-all duration-300">
                 <span className="relative z-10">View Full Training Programme</span>
@@ -1561,7 +1516,7 @@ function WhyUsSection() {
 
   // Count-up for the 35 Years feature numeral
   const featRef = useRef(null);
-  const featInView = useInView(featRef, { once: true, margin: '-90px' });
+  const featInView = useInView(featRef, { once: false, margin: '-90px' });
   const [years, setYears] = useState(0);
   useEffect(() => {
     if (!featInView) return;
@@ -1611,7 +1566,7 @@ function WhyUsSection() {
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.7, ease: eo }}
+        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: false }} transition={{ duration: 0.7, ease: eo }}
           className="text-center mb-14 lg:mb-16">
           <div className="inline-flex items-center gap-2.5 bg-[#e6a84f]/[0.1] border border-[#e6a84f]/30 rounded-full pl-2.5 pr-4 py-1.5 mb-7 backdrop-blur-md">
             <span className="h-1.5 w-1.5 rounded-full bg-[#e6a84f]" />
@@ -1630,11 +1585,11 @@ function WhyUsSection() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4 lg:gap-5">
 
           {/* Feature — 35 Years */}
-          <motion.div ref={featRef} initial={{ opacity: 0, y: 26, scale: 0.97 }} whileInView={{ opacity: 1, y: 0, scale: 1 }} viewport={{ once: true, margin: '-60px' }} transition={{ duration: 0.8, ease: eo }}
+          <motion.div ref={featRef} initial={{ opacity: 0, y: 26, scale: 0.97 }} whileInView={{ opacity: 1, y: 0, scale: 1 }} viewport={{ once: false, margin: '-60px' }} transition={{ duration: 0.8, ease: eo }}
             className="group relative overflow-hidden rounded-3xl p-7 lg:p-9 sm:col-span-2 lg:col-span-3 bg-gradient-to-br from-[#0c1c28] to-[#04090f] border border-[#e6a84f]/25 hover:border-[#e6a84f]/45 transition-colors duration-500">
             <div className="absolute -top-16 -right-10 w-52 h-52 bg-[#e6a84f]/10 blur-3xl rounded-full opacity-70 group-hover:opacity-100 transition-opacity duration-500" />
             {/* one-time glass reflection sweep */}
-            <motion.span initial={{ x: '-130%' }} whileInView={{ x: '130%' }} viewport={{ once: true }} transition={{ duration: 1.2, delay: 0.45, ease: 'easeInOut' }}
+            <motion.span initial={{ x: '-130%' }} whileInView={{ x: '130%' }} viewport={{ once: false }} transition={{ duration: 1.2, delay: 0.45, ease: 'easeInOut' }}
               className="absolute inset-y-0 left-0 w-1/3 bg-gradient-to-r from-transparent via-white/[0.07] to-transparent skew-x-12 pointer-events-none" />
             <div className="relative flex items-start justify-between gap-4">
               <div className="w-12 h-12 rounded-2xl bg-[#e6a84f]/[0.14] border border-[#e6a84f]/30 flex items-center justify-center text-[#e6a84f] group-hover:scale-105 transition-transform duration-300">
@@ -1654,7 +1609,7 @@ function WhyUsSection() {
           {/* Standard cards */}
           {points.map((p, i) => (
             <motion.div key={p.title}
-              initial={{ opacity: 0, y: 24, scale: 0.97 }} whileInView={{ opacity: 1, y: 0, scale: 1 }} viewport={{ once: true, margin: '-40px' }} transition={{ duration: 0.65, delay: 0.08 + i * 0.09, ease: eo }}
+              initial={{ opacity: 0, y: 24, scale: 0.97 }} whileInView={{ opacity: 1, y: 0, scale: 1 }} viewport={{ once: false, margin: '-40px' }} transition={{ duration: 0.65, delay: 0.08 + i * 0.09, ease: eo }}
               className={`group relative overflow-hidden rounded-3xl p-6 lg:p-7 bg-white/[0.035] border border-white/[0.08] hover:border-[#e6a84f]/35 transition-all duration-300 hover:-translate-y-1.5 hover:shadow-[0_22px_50px_rgba(0,0,0,0.45)] ${p.span || ''}`}>
               <span className="absolute -top-12 -right-12 w-24 h-24 bg-[#e6a84f]/10 blur-2xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
               <div className="relative w-12 h-12 rounded-2xl bg-[#e6a84f]/[0.12] border border-[#e6a84f]/25 flex items-center justify-center text-[#e6a84f] mb-5 group-hover:scale-110 group-hover:rotate-[6deg] transition-transform duration-300">
@@ -1666,7 +1621,7 @@ function WhyUsSection() {
           ))}
 
           {/* 48-72hr — small */}
-          <motion.div initial={{ opacity: 0, y: 24, scale: 0.97 }} whileInView={{ opacity: 1, y: 0, scale: 1 }} viewport={{ once: true, margin: '-40px' }} transition={{ duration: 0.65, delay: 0.36, ease: eo }}
+          <motion.div initial={{ opacity: 0, y: 24, scale: 0.97 }} whileInView={{ opacity: 1, y: 0, scale: 1 }} viewport={{ once: false, margin: '-40px' }} transition={{ duration: 0.65, delay: 0.36, ease: eo }}
             className="group relative overflow-hidden rounded-3xl p-6 lg:p-7 lg:col-span-2 bg-white/[0.035] border border-white/[0.08] hover:border-[#e6a84f]/35 transition-all duration-300 hover:-translate-y-1.5 hover:shadow-[0_22px_50px_rgba(0,0,0,0.45)]">
             <span className="absolute -top-12 -right-12 w-24 h-24 bg-[#e6a84f]/10 blur-2xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
             <div className="relative w-12 h-12 rounded-2xl bg-[#e6a84f]/[0.12] border border-[#e6a84f]/25 flex items-center justify-center text-[#e6a84f] mb-5 group-hover:scale-110 group-hover:rotate-[6deg] transition-transform duration-300">
@@ -1677,7 +1632,7 @@ function WhyUsSection() {
           </motion.div>
 
           {/* CTA tile */}
-          <motion.div initial={{ opacity: 0, y: 24, scale: 0.98 }} whileInView={{ opacity: 1, y: 0, scale: 1 }} viewport={{ once: true, margin: '-40px' }} transition={{ duration: 0.7, delay: 0.42, ease: eo }}
+          <motion.div initial={{ opacity: 0, y: 24, scale: 0.98 }} whileInView={{ opacity: 1, y: 0, scale: 1 }} viewport={{ once: false, margin: '-40px' }} transition={{ duration: 0.7, delay: 0.42, ease: eo }}
             className="relative overflow-hidden rounded-3xl p-7 lg:p-8 sm:col-span-2 lg:col-span-4 bg-gradient-to-br from-[#0d2230] to-[#04090f] border border-[#e6a84f]/25 flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div className="absolute -bottom-16 -left-10 w-52 h-52 bg-[#e6a84f]/10 blur-3xl rounded-full" />
             <div className="relative">
@@ -1764,7 +1719,7 @@ const INDUSTRIES_CINEMATIC = [
 
 function IndustryPanel({ item, index }: { item: typeof INDUSTRIES_CINEMATIC[0]; index: number }) {
   const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { once: true, margin: '-12%' });
+  const inView = useInView(ref, { once: false, margin: '-12%' });
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] });
   const imgScale = useTransform(scrollYProgress, [0, 1], [1.28, 1.06]);
   const imgY = useTransform(scrollYProgress, [0, 1], ['-7%', '7%']);
@@ -1778,7 +1733,7 @@ function IndustryPanel({ item, index }: { item: typeof INDUSTRIES_CINEMATIC[0]; 
         <motion.img src={item.img} alt={`Sai Saktheeswari workforce deployed in ${item.name}`}
           className="w-full h-full object-cover"
           initial={{ opacity: 0, filter: 'blur(16px)' }}
-          animate={inView ? { opacity: 1, filter: 'blur(0px)' } : {}}
+          animate={inView ? { opacity: 1, filter: 'blur(0px)' } : { opacity: 0, filter: 'blur(16px)' }}
           transition={{ duration: 1.4, ease: [0.22, 1, 0.36, 1] }} />
       </motion.div>
 
@@ -1795,7 +1750,7 @@ function IndustryPanel({ item, index }: { item: typeof INDUSTRIES_CINEMATIC[0]; 
 
           {/* Index */}
           <motion.div
-            initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : {}} transition={{ duration: 0.8 }}
+            initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : { opacity: 0 }} transition={{ duration: 0.8 }}
             className={`flex items-center gap-4 mb-7 ${flip ? 'lg:justify-end' : ''}`}>
             <span className="font-poppins text-[#e6a84f] text-sm font-bold tracking-[0.3em]">{item.n}</span>
             <span className="font-inter text-white/30 text-[10px] tracking-[0.35em] uppercase">Industries We Serve</span>
@@ -1807,7 +1762,7 @@ function IndustryPanel({ item, index }: { item: typeof INDUSTRIES_CINEMATIC[0]; 
 
           {/* Headline */}
           <motion.p
-            initial={{ opacity: 0, y: 16 }} animate={inView ? { opacity: 1, y: 0 } : {}}
+            initial={{ opacity: 0, y: 16 }} animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 16 }}
             transition={{ delay: 0.45, duration: 0.7 }}
             className="font-poppins text-xl lg:text-2xl text-[#f4cd87] font-medium mb-6">
             {item.headline}
@@ -1815,14 +1770,14 @@ function IndustryPanel({ item, index }: { item: typeof INDUSTRIES_CINEMATIC[0]; 
 
           {/* Gold accent line */}
           <motion.div
-            initial={{ scaleX: 0 }} animate={inView ? { scaleX: 1 } : {}}
+            initial={{ scaleX: 0 }} animate={inView ? { scaleX: 1 } : { scaleX: 0 }}
             transition={{ delay: 0.55, duration: 1, ease: [0.22, 1, 0.36, 1] }}
             className={`h-px w-24 bg-gradient-to-r from-[#e6a84f] to-transparent mb-6 ${flip ? 'lg:ml-auto lg:bg-gradient-to-l' : ''}`}
             style={{ transformOrigin: flip ? 'right' : 'left' }} />
 
           {/* Body */}
           <motion.p
-            initial={{ opacity: 0, y: 14 }} animate={inView ? { opacity: 1, y: 0 } : {}}
+            initial={{ opacity: 0, y: 14 }} animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 14 }}
             transition={{ delay: 0.6, duration: 0.7 }}
             className="font-inter text-white/55 text-base lg:text-lg leading-relaxed mb-8 max-w-md lg:inline-block">
             {item.body}
@@ -1832,7 +1787,7 @@ function IndustryPanel({ item, index }: { item: typeof INDUSTRIES_CINEMATIC[0]; 
           <div className={`flex flex-wrap gap-x-6 gap-y-3 ${flip ? 'lg:justify-end' : ''}`}>
             {item.proof.map((p, pi) => (
               <motion.span key={pi}
-                initial={{ opacity: 0, y: 10 }} animate={inView ? { opacity: 1, y: 0 } : {}}
+                initial={{ opacity: 0, y: 10 }} animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
                 transition={{ delay: 0.75 + pi * 0.1, duration: 0.5 }}
                 className="flex items-center gap-2 font-inter text-white/65 text-sm">
                 <span className="w-1 h-1 rounded-full bg-[#e6a84f]" />
@@ -1881,23 +1836,28 @@ function DeploymentBanner() {
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_55%_55%_at_18%_100%,rgba(230,168,79,0.15),transparent)] pointer-events-none" />
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <motion.div initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.7, ease: easeExpo }}
+        <motion.div initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: false }} transition={{ duration: 0.7, ease: easeExpo }}
           className="inline-flex items-center gap-2.5 bg-[#e6a84f]/[0.08] border border-[#e6a84f]/25 rounded-full pl-2.5 pr-4 py-1.5 mb-7 backdrop-blur-md">
           <span className="h-1.5 w-1.5 rounded-full bg-[#e6a84f]" />
           <span className="font-inter text-[#f0be6a] text-[11px] font-semibold tracking-[0.22em] uppercase">Trusted by 100+ businesses · Since 1991</span>
         </motion.div>
 
-        <motion.h2 initial={{ opacity: 0, y: 22 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.8, ease: easeExpo }}
+        <motion.h2 initial={{ opacity: 0, y: 22 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: false }} transition={{ duration: 0.8, ease: easeExpo }}
           className="font-poppins font-extrabold text-white text-4xl sm:text-5xl lg:text-6xl leading-[1.04] tracking-[-0.02em] max-w-3xl">
           Professionally trained.
           <span className="block font-fraunces italic font-medium bg-gradient-to-r from-[#f7d99a] to-[#c8902e] bg-clip-text text-transparent mt-1">Reliably deployed.</span>
         </motion.h2>
-        <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ delay: 0.2, duration: 0.8 }}
-          className="font-inter text-white/72 text-base lg:text-lg mt-6 max-w-xl leading-relaxed">
-          Our guards arrive at your site disciplined, uniformed, and ready — every single time.
-        </motion.p>
+        <div className="relative mt-6 max-w-xl">
+          <span aria-hidden className="pointer-events-none select-none absolute -top-4 -left-1 font-fraunces text-[48px] leading-none text-[#e6a84f]/25">
+            &ldquo;
+          </span>
+          <motion.p initial={{ opacity: 0, y: 8 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: false }} transition={{ delay: 0.2, duration: 0.8, ease: easeExpo }}
+            className="relative pl-4 border-l-2 border-[#e6a84f]/30 font-fraunces italic font-normal text-white/[0.88] text-lg lg:text-xl leading-relaxed tracking-[-0.005em]">
+            Our guards arrive at your site disciplined, uniformed, and ready — every single time.
+          </motion.p>
+        </div>
 
-        <motion.div initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.32, duration: 0.7, ease: easeExpo }}
+        <motion.div initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: false }} transition={{ delay: 0.32, duration: 0.7, ease: easeExpo }}
           className="flex flex-col sm:flex-row gap-3.5 mt-9">
           <a href="/contact"
             className="group relative overflow-hidden inline-flex items-center justify-center gap-2.5 bg-gradient-to-br from-[#f0be6a] via-[#e6a84f] to-[#c8902e] text-[#0a1a24] font-poppins font-bold text-sm px-7 py-3.5 rounded-xl shadow-[0_8px_30px_rgba(230,168,79,0.35)] hover:shadow-[0_12px_44px_rgba(230,168,79,0.55)] hover:-translate-y-0.5 active:scale-[0.98] transition-all duration-300">
@@ -1989,7 +1949,7 @@ function LeadForm() {
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-16">
 
           {/* LEFT — info */}
-          <motion.div initial={{ opacity: 0, y: 26 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: '-60px' }} transition={{ duration: 0.7, ease: easeExpo }}>
+          <motion.div initial={{ opacity: 0, y: 26 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: false, margin: '-60px' }} transition={{ duration: 0.7, ease: easeExpo }}>
             <div className="inline-flex items-center gap-2.5 mb-6">
               <span className="w-8 h-px bg-[#e6a84f]" />
               <span className="font-inter text-[#f0be6a] text-[11px] tracking-[0.4em] uppercase">Get In Touch</span>
@@ -2025,7 +1985,7 @@ function LeadForm() {
           </motion.div>
 
           {/* RIGHT — glass form */}
-          <motion.div initial={{ opacity: 0, y: 26 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: '-60px' }} transition={{ duration: 0.7, delay: 0.1, ease: easeExpo }}
+          <motion.div initial={{ opacity: 0, y: 26 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: false, margin: '-60px' }} transition={{ duration: 0.7, delay: 0.1, ease: easeExpo }}
             className="relative">
             <div className="relative rounded-3xl p-7 sm:p-9 bg-gradient-to-br from-[#0c1822]/90 to-[#070e16]/90 backdrop-blur-2xl border border-white/[0.08] shadow-[0_30px_70px_rgba(0,0,0,0.55)]">
               {sent ? (
@@ -2092,7 +2052,7 @@ function FAQSection() {
       <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'radial-gradient(#e6a84f 1px, transparent 1px)', backgroundSize: '34px 34px' }} />
 
       <div className="relative z-10 max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-        <motion.div initial={{ opacity: 0, y: 22 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.7, ease: easeExpo }}
+        <motion.div initial={{ opacity: 0, y: 22 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: false }} transition={{ duration: 0.7, ease: easeExpo }}
           className="text-center mb-14 lg:mb-16">
           <div className="inline-flex items-center gap-2.5 mb-6">
             <span className="w-8 h-px bg-[#e6a84f]" />
@@ -2111,7 +2071,7 @@ function FAQSection() {
             const isOpen = open === i;
             return (
               <motion.div key={i}
-                initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: '-30px' }} transition={{ duration: 0.5, delay: i * 0.05, ease: easeExpo }}
+                initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: false, margin: '-30px' }} transition={{ duration: 0.5, delay: i * 0.05, ease: easeExpo }}
                 className={`rounded-2xl border transition-colors duration-300 overflow-hidden ${isOpen ? 'bg-white/[0.05] border-[#e6a84f]/25' : 'bg-white/[0.025] border-white/[0.07] hover:border-white/[0.14]'}`}>
                 <button onClick={() => setOpen(isOpen ? null : i)} aria-expanded={isOpen}
                   className="w-full text-left py-5 px-5 sm:px-6 flex justify-between items-center gap-4">
@@ -2132,7 +2092,7 @@ function FAQSection() {
           })}
         </div>
 
-        <motion.div initial={{ opacity: 0, y: 14 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6, ease: easeExpo }}
+        <motion.div initial={{ opacity: 0, y: 14 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: false }} transition={{ duration: 0.6, ease: easeExpo }}
           className="text-center mt-12">
           <p className="font-inter text-white/45 text-sm mb-4">Still have a question?</p>
           <a href={`https://wa.me/${COMPANY.phone.whatsapp}`} target="_blank" rel="noopener noreferrer"

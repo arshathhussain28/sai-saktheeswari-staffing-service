@@ -5,7 +5,7 @@ import { motion, useInView } from 'framer-motion';
 
 export const ease = [0.25, 0.4, 0.25, 1] as [number, number, number, number];
 
-/** Scroll-reveal wrapper — fades + lifts content into view once. */
+/** Scroll-reveal wrapper — fades + lifts content into view, replays in both scroll directions. */
 export function Reveal({
   children,
   className = '',
@@ -21,7 +21,7 @@ export function Reveal({
     <motion.div
       initial={{ opacity: 0, y }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: '-80px' }}
+      viewport={{ once: false, margin: '-80px' }}
       transition={{ duration: 0.6, ease, delay }}
       className={className}
     >
@@ -33,10 +33,10 @@ export function Reveal({
 /** Count-up number, triggers on scroll into view. */
 export function Counter({ to, suffix = '' }: { to: number; suffix?: string }) {
   const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: '-40px' });
+  const inView = useInView(ref, { once: false, margin: '-40px' });
   const [n, setN] = useState(0);
   useEffect(() => {
-    if (!inView) return;
+    if (!inView) { setN(0); return; }
     let raf = 0;
     const start = performance.now();
     const dur = 1600;
