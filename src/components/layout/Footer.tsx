@@ -108,11 +108,11 @@ export default function Footer() {
           <div className="lg:col-span-4">
             <div className="flex items-center gap-3 mb-5">
               <div className="w-12 h-12 rounded-full overflow-hidden ring-2 ring-[#e6a84f]/25">
-                <img src="/images/logo.jpeg" alt="Sai Saktheeswari Staffing Services" className="w-full h-full object-cover" />
+                <img src="/images/logo.jpeg" alt="Sai Saktheeswari Security & Staffing Services" className="w-full h-full object-cover" />
               </div>
               <div>
                 <p className="font-poppins font-bold text-white text-sm leading-tight">Sai Saktheeswari</p>
-                <p className="font-inter text-[#e6a84f]/80 text-[11px] tracking-[0.18em] uppercase mt-0.5">Staffing Services</p>
+                <p className="font-inter text-[#e6a84f]/80 text-[11px] tracking-[0.18em] uppercase mt-0.5">Security &amp; Staffing Services</p>
               </div>
             </div>
             <p className="font-inter text-white/45 text-sm leading-relaxed mb-6 max-w-xs">
@@ -201,7 +201,7 @@ export default function Footer() {
         {/* ── Bottom bar ── */}
         <div className="py-7 border-t border-white/[0.06] flex flex-col md:flex-row justify-between items-center gap-3">
           <p className="font-inter text-white/30 text-xs">
-            © {new Date().getFullYear()} Sai Saktheeswari Staffing Services · Established 1991 · All Rights Reserved.
+            © {new Date().getFullYear()} Sai Saktheeswari Security &amp; Staffing Services · Established 1991 · All Rights Reserved.
           </p>
           <p className="font-inter text-white/25 text-xs tracking-wide">Cuddalore · Puducherry · Tamil Nadu</p>
         </div>

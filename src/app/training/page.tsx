@@ -7,7 +7,7 @@ export const metadata: Metadata = {
     "Structured training in discipline, safety protocols, communication and weekly refreshers — overseen by our senior training team. No one reaches your site untrained.",
   alternates: { canonical: "/training" },
   openGraph: {
-    title: "Training Excellence | Sai Saktheeswari Staffing Services",
+    title: "Training Excellence | Sai Saktheeswari Security & Staffing Services",
     description:
       "Discipline, safety, communication and refresher training — the standards behind every deployment.",
     url: "/training",

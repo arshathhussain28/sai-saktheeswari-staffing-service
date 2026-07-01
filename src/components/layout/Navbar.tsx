@@ -38,16 +38,22 @@ export default function Navbar() {
       <div className="max-w-[1440px] mx-auto px-6 sm:px-10 lg:px-14 flex items-center justify-between">
 
         {/* Logo */}
-        <a href="/" className="flex items-center gap-3.5 group flex-shrink-0">
+        <a href="/" className="flex items-center gap-3 sm:gap-4 group flex-shrink-0 min-w-0">
           <motion.div
-            animate={{ scale: scrolled ? 0.84 : 1 }}
+            animate={{ scale: scrolled ? 0.86 : 1 }}
             transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-            className="w-10 h-10 rounded-full overflow-hidden ring-1 ring-[#e6a84f]/30 group-hover:ring-[#e6a84f]/65 transition-all duration-500">
-            <img src="/images/logo.jpeg" alt="Sai Saktheeswari Staffing Services" className="w-full h-full object-cover" />
+            className="w-11 h-11 sm:w-12 sm:h-12 lg:w-[52px] lg:h-[52px] flex-shrink-0 rounded-full overflow-hidden ring-1 ring-[#e6a84f]/30 group-hover:ring-[#e6a84f]/65 transition-all duration-500">
+            <img
+              src="/images/logo.jpeg"
+              alt="Sai Saktheeswari Security & Staffing Services"
+              width={104}
+              height={104}
+              className="w-full h-full object-cover"
+            />
           </motion.div>
-          <motion.div animate={{ scale: scrolled ? 0.93 : 1 }} transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}>
-            <p className="font-poppins font-semibold text-white text-[13.5px] leading-tight tracking-[-0.01em]">Sai Saktheeswari</p>
-            <p className="font-inter text-[#e6a84f]/[0.85] text-[9.5px] tracking-[0.26em] uppercase mt-0.5">Staffing Services</p>
+          <motion.div animate={{ scale: scrolled ? 0.95 : 1 }} transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }} className="min-w-0">
+            <p className="font-poppins font-bold text-white text-[15px] sm:text-[16px] lg:text-[17.5px] leading-[1.18] tracking-[-0.005em] whitespace-nowrap">Sai Saktheeswari</p>
+            <p className="font-inter font-medium text-[#e6a84f]/90 text-[8.5px] sm:text-[9.5px] lg:text-[10.5px] tracking-[0.14em] sm:tracking-[0.18em] uppercase mt-1 whitespace-nowrap">Security &amp; Staffing Services</p>
           </motion.div>
         </a>
 

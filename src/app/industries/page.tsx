@@ -7,7 +7,7 @@ export const metadata: Metadata = {
     "Trained security & manpower for manufacturing, logistics, construction, commercial facilities, corporate offices and educational institutions across Tamil Nadu & Puducherry.",
   alternates: { canonical: "/industries" },
   openGraph: {
-    title: "Industries We Serve | Sai Saktheeswari Staffing Services",
+    title: "Industries We Serve | Sai Saktheeswari Security & Staffing Services",
     description:
       "Workforce matched to the demands of your industry — from factory floors to college campuses.",
     url: "/industries",

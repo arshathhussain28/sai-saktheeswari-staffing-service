@@ -34,8 +34,8 @@ export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
     default:
-      "Sai Saktheeswari Staffing Services | Security & Manpower in Cuddalore Since 1991",
-    template: "%s | Sai Saktheeswari Staffing Services",
+      "Sai Saktheeswari Security & Staffing Services | Security & Manpower in Cuddalore Since 1991",
+    template: "%s | Sai Saktheeswari Security & Staffing Services",
   },
   description:
     "Trusted staffing, security & manpower services since 1991. Serving 100+ businesses across Cuddalore & Puducherry — security personnel, labour outsourcing, contract workforce & statutory HR compliance (PF, ESI).",
@@ -49,16 +49,16 @@ export const metadata: Metadata = {
     "contract workforce Tamil Nadu",
     "PF ESI compliance Cuddalore",
   ],
-  authors: [{ name: "Sai Saktheeswari Staffing Services" }],
-  creator: "Sai Saktheeswari Staffing Services",
+  authors: [{ name: "Sai Saktheeswari Security & Staffing Services" }],
+  creator: "Sai Saktheeswari Security & Staffing Services",
   alternates: { canonical: "/" },
   openGraph: {
     type: "website",
     locale: "en_IN",
     url: SITE_URL,
-    siteName: "Sai Saktheeswari Staffing Services",
+    siteName: "Sai Saktheeswari Security & Staffing Services",
     title:
-      "Sai Saktheeswari Staffing Services | Security & Manpower Since 1991",
+      "Sai Saktheeswari Security & Staffing Services | Security & Manpower Since 1991",
     description:
       "35 years of trusted security & manpower staffing across Cuddalore & Puducherry. 500+ workforce deployed, 100+ businesses served.",
     images: [
@@ -73,7 +73,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title:
-      "Sai Saktheeswari Staffing Services | Security & Manpower Since 1991",
+      "Sai Saktheeswari Security & Staffing Services | Security & Manpower Since 1991",
     description:
       "35 years of trusted security & manpower staffing across Cuddalore & Puducherry.",
     images: ["/images/dsc/formation-aerial.jpg"],
@@ -96,7 +96,7 @@ export const metadata: Metadata = {
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "EmploymentAgency",
-  name: "Sai Saktheeswari Staffing Services",
+  name: "Sai Saktheeswari Security & Staffing Services",
   description:
     "Security personnel deployment, labour outsourcing, contract workforce management and statutory HR compliance across Tamil Nadu & Puducherry since 1991.",
   url: SITE_URL,

@@ -7,7 +7,7 @@ export const metadata: Metadata = {
     "Request security personnel, labour or contract workforce. Call +91 93676 26855, WhatsApp, or email saisaktheeswari@gmail.com. Offices in Cuddalore & Puducherry. 24-hour response.",
   alternates: { canonical: "/contact" },
   openGraph: {
-    title: "Contact Us | Sai Saktheeswari Staffing Services",
+    title: "Contact Us | Sai Saktheeswari Security & Staffing Services",
     description:
       "Tell us your workforce requirement — 24-hour response, same-day on WhatsApp. Offices in Cuddalore & Puducherry.",
     url: "/contact",

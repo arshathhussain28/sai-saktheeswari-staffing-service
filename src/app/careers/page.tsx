@@ -7,7 +7,7 @@ export const metadata: Metadata = {
     "Hiring security guards, supervisors, female security officers and support staff across Cuddalore & Puducherry. Training, PF/ESI benefits and steady deployment. Apply on WhatsApp.",
   alternates: { canonical: "/careers" },
   openGraph: {
-    title: "Careers | Sai Saktheeswari Staffing Services",
+    title: "Careers | Sai Saktheeswari Security & Staffing Services",
     description:
       "Build a career with 35 years of trust — training, statutory benefits and steady deployment across South India.",
     url: "/careers",
